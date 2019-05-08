@@ -1,17 +1,19 @@
 #ifndef FRACTION_HH
 #define FRACTION_HH
 
+#include "BigInteger.hh"
+
 class Fraction
 {
 
 public:
-    long numerator;
-    long denominator;
+    BigInteger numerator;
+    BigInteger denominator;
 
 public:
     Fraction();
-    Fraction(long numerator);
-    Fraction(long numerator, long denominator);
+    Fraction(BigInteger numerator);
+    Fraction(BigInteger numerator, BigInteger denominator);
     Fraction multiply(Fraction f);
     Fraction divide(Fraction f);
     Fraction add(Fraction f);

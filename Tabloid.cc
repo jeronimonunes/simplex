@@ -110,8 +110,6 @@ Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
                 }
                 else
                 {
-                    
-                    std::cout << aLine[coord.y].numerator << "/" << aLine[coord.y].denominator << std::endl;
                     Fraction fix = aLine[coord.y].multiply(neg);
                     aLine = Vectors::sum(aLine, Vectors::multiply(pline, fix));
                     cLine = Vectors::sum(cLine, Vectors::multiply(cpline, fix));

@@ -53,5 +53,11 @@ int main()
     assertTrue(!f.isOne());
     assertTrue(!f.isZero());
     assertTrue(f.multiply(Fraction(3, 15)).isOne());
+    assertTrue(BigInteger("100000000000") / (BigInteger("3")) == BigInteger("33333333333"));
+    assertTrue(BigInteger("100000000000") % (BigInteger("3")) == BigInteger("1"));
+    assertTrue(BigInteger("123456789") / (BigInteger("33")) == BigInteger("3741114"));
+    assertTrue(BigInteger("123456789") % (BigInteger("33")) == BigInteger("27"));
+    assertTrue(BigInteger("987654321") / (BigInteger("345")) == BigInteger("2862766"));
+    assertTrue(BigInteger("987654321") % (BigInteger("345")) == BigInteger("51"));
     return 0;
 }
