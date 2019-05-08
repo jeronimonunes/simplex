@@ -6,52 +6,47 @@
 #include <sstream>
 #include <cmath>
 #include "BigInteger.hh"
+#include <limits>
+
+BigInteger MAX(BigInteger::toString(std::numeric_limits<long long>::max()));
 
 BigInteger::BigInteger() // empty constructor initializes zero
 {
-	number = "0";
-	sign = false;
+	native = true;
+	value = 0;
 }
 //-------------------------------------------------------------
 BigInteger::BigInteger(string s) // "string" constructor
 {
+	native = false;
 	if (s.length() == 0)
 	{
-		setNumber("0");
-		sign = false;
+		native = true;
+		value = 0;
 	}
 	else if (isdigit(s[0])) // if not signed
 	{
-		setNumber(s);
+		number = s;
 		sign = false; // +ve
 	}
 	else
 	{
-		setNumber(s.substr(1));
+		number = s.substr(1);
 		sign = (s[0] == '-');
 	}
 }
 //-------------------------------------------------------------
 BigInteger::BigInteger(string s, bool sin) // "string" constructor
 {
-	setNumber(s);
-	setSign(sin);
+	native = false;
+	number = s;
+	sign = sin;
 }
 //-------------------------------------------------------------
-BigInteger::BigInteger(int n) // "int" constructor
+BigInteger::BigInteger(long long n) // "long long" constructor
 {
-	string s = toString(n);
-
-	if (isdigit(s[0])) // if not signed
-	{
-		setNumber(s);
-		setSign(false); // +ve
-	}
-	else
-	{
-		setNumber(s.substr(1));
-		setSign(s[0] == '-');
-	}
+	native = true;
+	value = n;
 }
 //-------------------------------------------------------------
 void BigInteger::setNumber(string s)
@@ -77,43 +72,148 @@ const bool &BigInteger::getSign()
 // returns the absolute value
 BigInteger BigInteger::absolute()
 {
-	return BigInteger(getNumber()); // +ve by default
+	if (native)
+	{
+		if (value < 0)
+		{
+			return BigInteger(-value);
+		}
+		else
+		{
+			return *this;
+		}
+	}
+	else
+	{
+		if (sign)
+		{
+			return BigInteger(number); // +ve by default
+		}
+		else
+		{
+			return *this;
+		}
+	}
 }
 //-------------------------------------------------------------
 void BigInteger::operator=(BigInteger b)
 {
-	setNumber(b.getNumber());
-	setSign(b.getSign());
+	number = b.number;
+	native = b.native;
+	value = b.value;
+	sign = b.sign;
 }
 //-------------------------------------------------------------
 bool BigInteger::operator==(BigInteger b)
 {
-	return equals((*this), b);
+	if (native && b.native)
+	{
+		return value == b.value;
+	}
+	else if (native)
+	{
+		return false;
+	}
+	else if (b.native)
+	{
+		return false;
+	}
+	else
+	{
+		return equals((*this), b);
+	}
 }
 //-------------------------------------------------------------
 bool BigInteger::operator!=(BigInteger b)
 {
-	return this->getSign() != b.getSign() || this->getNumber() != b.getNumber();
+	if (native && b.native)
+	{
+		return value != b.value;
+	}
+	else if (native)
+	{
+		return true;
+	}
+	else if (b.native)
+	{
+		return true;
+	}
+	else
+	{
+		return sign != b.sign || number != b.number;
+	}
 }
 //-------------------------------------------------------------
 bool BigInteger::operator>(BigInteger b)
 {
-	return greater((*this), b);
+	if (native && b.native)
+	{
+		return value > b.value;
+	}
+	else if (native)
+	{
+		return false;
+	}
+	else if (b.native)
+	{
+		return true;
+	}
+	else
+	{
+		return greater((*this), b);
+	}
 }
 //-------------------------------------------------------------
 bool BigInteger::operator<(BigInteger b)
 {
-	return less((*this), b);
+	if (native && b.native)
+	{
+		return value < b.value;
+	}
+	else if (native)
+	{
+		return true;
+	}
+	else if (b.native)
+	{
+		return false;
+	}
+	else
+	{
+		return less((*this), b);
+	}
 }
 //-------------------------------------------------------------
 bool BigInteger::operator>=(BigInteger b)
 {
-	return equals((*this), b) || greater((*this), b);
+	if (native && b.native)
+	{
+		return value >= b.value;
+	}
+	else if (native || b.native)
+	{
+		return false;
+	}
+	else
+	{
+		return greater((*this), b) || equals((*this), b);
+	}
 }
 //-------------------------------------------------------------
 bool BigInteger::operator<=(BigInteger b)
 {
-	return equals((*this), b) || less((*this), b);
+	if (native && b.native)
+	{
+		return value <= b.value;
+	}
+	else if (native || b.native)
+	{
+		return false;
+	}
+	else
+	{
+		return less((*this), b) || equals((*this), b);
+	}
 }
 //-------------------------------------------------------------
 // increments the value, then returns its value
@@ -152,67 +252,235 @@ BigInteger BigInteger::operator--(int) // postfix
 //-------------------------------------------------------------
 BigInteger BigInteger::operator+(BigInteger b)
 {
-	BigInteger addition;
-	if (getSign() == b.getSign()) // both +ve or -ve
+	if (native && b.native)
 	{
-		addition.setNumber(add(getNumber(), b.getNumber()));
-		addition.setSign(getSign());
+		if (value <= std::numeric_limits<long long>::max() - b.value)
+		{
+			return value + b.value;
+		}
+	}
+	if (native)
+	{
+		string s = toString(value);
+		if (isdigit(s[0]))
+		{
+			sign = false;
+			number = s;
+		}
+		else
+		{
+			sign = true;
+			number = s.substr(1);
+		}
+	}
+	if (b.native)
+	{
+		string s = toString(b.value);
+		if (isdigit(s[0]))
+		{
+			b.sign = false;
+			b.number = s;
+		}
+		else
+		{
+			b.sign = true;
+			b.number = s.substr(1);
+		}
+	}
+	BigInteger addition;
+	addition.native = false;
+	if (sign == b.sign) // both +ve or -ve
+	{
+		addition.number = add(number, b.number);
+		addition.sign = sign;
 	}
 	else // sign different
 	{
 		if (absolute() > b.absolute())
 		{
-			addition.setNumber(subtract(getNumber(), b.getNumber()));
-			addition.setSign(getSign());
+			addition.number = subtract(number, b.number);
+			addition.sign = sign;
 		}
 		else
 		{
-			addition.setNumber(subtract(b.getNumber(), getNumber()));
-			addition.setSign(b.getSign());
+			addition.number = subtract(b.number, number);
+			addition.sign = b.sign;
+		}
+		if (addition < MAX)
+		{
+			addition.value = toInt(addition.number);
+			if (addition.sign)
+			{
+				addition.value = -addition.value;
+			}
+			addition.native = true;
 		}
 	}
-	if (addition.getNumber() == "0") // avoid (-0) problem
-		addition.setSign(false);
+	if (addition.number == "0") // avoid (-0) problem
+		addition.sign = false;
 
 	return addition;
 }
 //-------------------------------------------------------------
 BigInteger BigInteger::operator-(BigInteger b)
 {
-	b.setSign(!b.getSign()); // x - y = x + (-y)
+	b.sign = !b.sign; // x - y = x + (-y)
 	return (*this) + b;
 }
 //-------------------------------------------------------------
 BigInteger BigInteger::operator*(BigInteger b)
 {
+	if ((*this) == 0 || b == 0)
+	{
+		return 0;
+	}
+	else if (native && b.native)
+	{
+		if (value <= std::numeric_limits<long long>::max() / b.value)
+		{
+			return value * b.value;
+		}
+	}
+	if (native)
+	{
+		string s = toString(value);
+		if (isdigit(s[0]))
+		{
+			sign = false;
+			number = s;
+		}
+		else
+		{
+			sign = true;
+			number = s.substr(1);
+		}
+	}
+	if (b.native)
+	{
+		string s = toString(b.value);
+		if (isdigit(s[0]))
+		{
+			b.sign = false;
+			b.number = s;
+		}
+		else
+		{
+			b.sign = true;
+			b.number = s.substr(1);
+		}
+	}
 	BigInteger mul;
 
-	mul.setNumber(multiply(getNumber(), b.getNumber()));
-	mul.setSign(getSign() != b.getSign());
+	mul.number = multiply(number, b.number);
+	mul.sign = sign != b.sign;
+	mul.native = false;
 
-	if (mul.getNumber() == "0") // avoid (-0) problem
-		mul.setSign(false);
+	if (mul.number == "0") // avoid (-0) problem
+		mul.sign = false;
 
 	return mul;
 }
 //-------------------------------------------------------------
 BigInteger BigInteger::operator/(BigInteger b)
 {
-	long long den = toInt(b.getNumber());
-	BigInteger div;
-
-	div.setNumber(meudivide(getNumber(), den).first);
-	div.setSign(getSign() != b.getSign());
-
-	if (div.getNumber() == "0") // avoid (-0) problem
-		div.setSign(false);
-
-	return div;
+	if (b == 1)
+	{
+		return *this;
+	}
+	else if (native && b.native)
+	{
+		return value / b.value;
+	}
+	else if (native)
+	{
+		string s = toString(value);
+		if (isdigit(s[0]))
+		{
+			sign = false;
+			number = s;
+		}
+		else
+		{
+			sign = true;
+			number = s.substr(1);
+		}
+	}
+	else if (b.native)
+	{
+		string s = toString(b.value);
+		if (isdigit(s[0]))
+		{
+			b.sign = false;
+			b.number = s;
+		}
+		else
+		{
+			b.sign = true;
+			b.number = s.substr(1);
+		}
+	}
+	BigInteger divide = meudivide((*this), b).first;
+	if (divide < MAX)
+	{
+		divide.value = toInt(divide.number);
+		if (divide.sign)
+		{
+			divide.value = -divide.value;
+		}
+		divide.native = true;
+	}
+	return divide;
 }
 //-------------------------------------------------------------
 BigInteger BigInteger::operator%(BigInteger b)
 {
-	return meudivide(*this, b).second;
+	if (b == 1)
+	{
+		return 0;
+	}
+	else if (native && b.native)
+	{
+		return value % b.value;
+	}
+	else if (native)
+	{
+		string s = toString(value);
+		if (isdigit(s[0]))
+		{
+			sign = false;
+			number = s;
+		}
+		else
+		{
+			sign = true;
+			number = s.substr(1);
+		}
+	}
+	else if (b.native)
+	{
+		string s = toString(b.value);
+		if (isdigit(s[0]))
+		{
+			b.sign = false;
+			b.number = s;
+		}
+		else
+		{
+			b.sign = true;
+			b.number = s.substr(1);
+		}
+	}
+	BigInteger mod = meudivide((*this), b).second;
+	if (mod < MAX)
+	{
+		mod.value = toInt(mod.number);
+		if (mod.sign)
+		{
+			mod.value = -mod.value;
+		}
+		mod.native = true;
+	}
+	return mod;
 }
 //-------------------------------------------------------------
 BigInteger &BigInteger::operator+=(BigInteger b)
@@ -252,28 +520,41 @@ BigInteger &BigInteger::operator[](int n)
 //-------------------------------------------------------------
 BigInteger BigInteger::operator-() // unary minus sign
 {
-	this->sign = !this->sign;
-	return (*this);
+	if (native)
+	{
+		value = -value;
+	}
+	else
+	{
+		return BigInteger(number, !sign);
+	}
 }
 //-------------------------------------------------------------
 BigInteger::operator string() // for conversion from BigInteger to string
 {
-	string signedString = (getSign()) ? "-" : ""; // if +ve, don't print + sign
-	signedString += number;
-	return signedString;
+	if (native)
+	{
+		return toString(value);
+	}
+	else
+	{
+		string signedString = (sign) ? "-" : ""; // if +ve, don't print + sign
+		signedString += number;
+		return signedString;
+	}
 }
 //-------------------------------------------------------------
 
 bool BigInteger::equals(BigInteger n1, BigInteger n2)
 {
-	return n1.getSign() == n2.getSign() && n1.getNumber() == n2.getNumber();
+	return n1.sign == n2.sign && n1.number == n2.number;
 }
 
 //-------------------------------------------------------------
 bool BigInteger::less(BigInteger n1, BigInteger n2)
 {
-	bool sign1 = n1.getSign();
-	bool sign2 = n2.getSign();
+	bool sign1 = n1.sign;
+	bool sign2 = n2.sign;
 
 	if (sign1 && !sign2) // if n1 is -ve and n2 is +ve
 		return true;
@@ -283,25 +564,25 @@ bool BigInteger::less(BigInteger n1, BigInteger n2)
 
 	else if (!sign1) // both +ve
 	{
-		if (n1.getNumber().length() < n2.getNumber().length())
+		if (n1.number.length() < n2.number.length())
 			return true;
-		if (n1.getNumber().length() > n2.getNumber().length())
+		if (n1.number.length() > n2.number.length())
 			return false;
-		return n1.getNumber() < n2.getNumber();
+		return n1.number < n2.number;
 	}
 	else // both -ve
 	{
-		if (n1.getNumber().length() > n2.getNumber().length())
+		if (n1.number.length() > n2.number.length())
 			return true;
-		if (n1.getNumber().length() < n2.getNumber().length())
+		if (n1.number.length() < n2.number.length())
 			return false;
-		return n1.getNumber() > n2.getNumber(); // greater with -ve sign is LESS
+		return n1.number > n2.number; // greater with -ve sign is LESS
 	}
 }
 //-------------------------------------------------------------
 bool BigInteger::greater(BigInteger n1, BigInteger n2)
 {
-	return !equals(n1, n2) && !less(n1, n2);//TODO optimize here
+	return !equals(n1, n2) && !less(n1, n2); //TODO optimize here
 }
 
 //-------------------------------------------------------------
@@ -468,7 +749,7 @@ string BigInteger::workPiece(string &dividendos, string piece, int idx, string &
 		}
 	}
 	res.append(digitToString(i));
-	piece = subtract(piece, toSub.getNumber());
+	piece = subtract(piece, toSub.number);
 	if (idx < dividendos.length())
 	{
 		if (piece != "0")
@@ -489,17 +770,17 @@ string BigInteger::workPiece(string &dividendos, string piece, int idx, string &
 
 pair<BigInteger, BigInteger> BigInteger::meudivide(BigInteger dividendo, BigInteger divisor)
 {
-	if (dividendo.getSign())
+	if (dividendo.sign)
 	{
 		pair<BigInteger, BigInteger> resp = meudivide(dividendo.absolute(), divisor.absolute());
 		resp.second.setSign(true);
-		if (!divisor.getSign())
+		if (!divisor.sign)
 		{
 			resp.first.setSign(true);
 		}
 		return resp;
 	}
-	else if (divisor.getSign())
+	else if (divisor.sign)
 	{
 		pair<BigInteger, BigInteger> resp = meudivide(dividendo, divisor.absolute());
 		resp.first.setSign(true);
@@ -515,8 +796,8 @@ pair<BigInteger, BigInteger> BigInteger::meudivide(BigInteger dividendo, BigInte
 	}
 	else
 	{
-		string dividendos = dividendo.getNumber();
-		string divisors = divisor.getNumber();
+		string dividendos = dividendo.number;
+		string divisors = divisor.number;
 		string piece = dividendos.substr(0, divisors.length());
 		string quo;
 		if (BigInteger(piece) < divisor && piece.length() < dividendos.length())
@@ -567,10 +848,10 @@ long long BigInteger::toInt(string s)
 double BigInteger::eval()
 {
 	double val = 0;
-	string s = this->getNumber();
+	string s = this->number;
 	for (int i = 0; i < s.length(); i++)
 		val = (val * 10) + (s[i] - '0');
-	if (this->getSign())
+	if (this->sign)
 	{
 		val *= -1;
 	}

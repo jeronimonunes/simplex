@@ -1,7 +1,7 @@
 #ifndef FRACTION_HH
 #define FRACTION_HH
 
-#include "BigInteger.hh"
+#include "bigint/BigInteger.hh"
 
 class Fraction
 {
@@ -22,6 +22,7 @@ public:
     bool isZero();
     bool isNegative();
     bool isPositive();
+    bool operator < (const Fraction &x) const ;
 
     Fraction invert();
 

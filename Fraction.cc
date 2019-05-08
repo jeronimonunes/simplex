@@ -1,5 +1,7 @@
 #include "Fraction.hh"
 #include <limits>
+#include <sstream>
+#include "bigint/BigIntegerUtils.hh"
 
 Fraction zero(0L);
 Fraction one(1L);
@@ -114,21 +116,41 @@ Fraction Fraction::invert()
     }
 }
 
+double toDouble(BigInteger &v)
+{
+    std::stringstream ss;
+    ss << v;
+    double d;
+    ss >> d;
+    return d;
+}
+
 double Fraction::eval()
 {
     if (this->denominator == 1L)
     {
-        return this->numerator.eval();
+        return toDouble(this->numerator);
     }
     if (this->numerator == 0L)
     {
         return 0;
     }
-    double numerator = this->numerator.eval();
-    double denominator = this->denominator.eval();
+    double numerator = toDouble(this->numerator);
+    double denominator = toDouble(this->denominator);
     if (denominator == 0)
     {
         return std::numeric_limits<double>::quiet_NaN();
     }
     return numerator / denominator;
+}
+
+bool Fraction::operator<(const Fraction &x) const
+{
+    if(this->denominator == x.denominator) {
+        return this->numerator < x.numerator;
+    } else {
+        BigInteger a = this->numerator * x.denominator;
+        BigInteger b = x.numerator * this->denominator;
+        return a < b;
+    }
 }

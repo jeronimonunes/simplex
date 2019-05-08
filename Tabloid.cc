@@ -140,17 +140,17 @@ Coordinate Tabloid::getCoordinateToEnterBase(std::vector<Coordinate> base)
     {
         if (!find(base, j) && this->C[j].isNegative())
         {
-            double oldValue = std::numeric_limits<double>::infinity();
             int oldIndex = -1;
+            Fraction oldValue;
             for (int i = 0; i < this->A.size(); i++)
             {
                 if (this->A[i][j].isPositive())
                 {
-                    double newValue = this->B[i].divide(this->A[i][j]).eval();
-                    if (newValue < oldValue)
+                    Fraction value = this->B[i].divide(this->A[i][j]);
+                    if(oldIndex == -1 || value < oldValue)
                     {
                         oldIndex = i;
-                        oldValue = newValue;
+                        oldValue = value;
                     }
                 }
             }
