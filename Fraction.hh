@@ -20,17 +20,33 @@ public:
     bool isZero() const;
     bool isNegative() const;
     bool isPositive() const;
+
+    bool operator==(const Fraction &x) const;
+    bool operator!=(const Fraction &x) const;
     bool operator<(const Fraction &x) const;
-    Fraction operator+(const Fraction x) const;
-    Fraction operator*(const Fraction x) const;
-    Fraction operator/(const Fraction x) const;
+    bool operator>(const Fraction &x) const;
+    bool operator<=(const Fraction &x) const;
+    bool operator>=(const Fraction &x) const;
+
+    Fraction operator+(const Fraction &x) const;
+    Fraction operator-(const Fraction &x) const;
+    Fraction operator*(const Fraction &x) const;
+    Fraction operator/(const Fraction &x) const;
     Fraction operator-() const;
+
+    void operator +=(const Fraction &x);
+	void operator -=(const Fraction &x);
+	void operator *=(const Fraction &x);
+	void operator /=(const Fraction &x);
 
     Fraction invert() const;
 
     double eval() const;
 };
 
-std::ostream &operator <<(std::ostream &os, const Fraction &x);
+/**
+ * outputs this fraction as a decimal number of precision 7
+ */
+std::ostream &operator<<(std::ostream &os, const Fraction &x);
 
 #endif

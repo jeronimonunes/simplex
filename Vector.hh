@@ -17,5 +17,6 @@ Vector concat(Vector a, Vector b);
 Vector operator+(Vector &a, Vector &b);
 Vector operator+(Vector &a, Vector b);
 Vector operator*(Vector &a, Fraction &b);
+Vector operator*(Vector &a, int b);
 
 #endif

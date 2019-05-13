@@ -70,3 +70,9 @@ Vector operator*(Vector &a, Fraction &b)
         result.push_back(a[result.size()] * b);
     return result;
 }
+
+Vector operator*(Vector &a, int b)
+{
+    Fraction fb = b;
+    return a * fb;
+}

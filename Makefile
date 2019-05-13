@@ -3,8 +3,8 @@ CC=g++ -g -Ofast
 all: Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o
 	$(CC) -o a.exe Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
 
-test: Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc BigInteger.o
-	$(CC) -o test.exe Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc BigInteger.o
+test: Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc
+	$(CC) -o test.exe Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
 	./test.exe
 
 Main.o: Main.cc

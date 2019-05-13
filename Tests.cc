@@ -29,35 +29,32 @@ int main()
     {
         assertTrue(zeros[i].isZero());
     }
-    Vector ones = Vectors::repeat(one, 4);
+    Vector ones = Vectors::repeat(1, 4);
     assertEqual(ones.size(), 4);
     for (int i = 0; i < 4; i++)
     {
         assertTrue(ones[i].isOne());
     }
     Vector concat = Vectors::concat(zeros, ones);
-    concat = Vectors::multiply(concat, neg);
+    concat = concat * -1;
     assertEqual(concat.size(), 8);
     assertTrue(concat[0].isZero());
+    assertTrue(concat[0] == 0);
     assertTrue(concat[7].isNegative());
-    Vector s = Vectors::sum(concat, concat);
+    assertTrue(concat[7] < 0);
+    Vector s = concat * 2;
     assertEqual(s.size(), 8);
     assertTrue(s[0].isZero());
     assertTrue(s[7].isNegative());
-    assertTrue(s[7].eval() == one.add(one).multiply(neg).eval());
+    assertTrue(s[7].eval() == -2);
 
     Fraction f(15, 3);
     assertTrue(f.isPositive());
+    assertTrue(f > 0);
     assertTrue(f.eval() == 5);
     assertTrue(!f.isNegative());
     assertTrue(!f.isOne());
     assertTrue(!f.isZero());
-    assertTrue(f.multiply(Fraction(3, 15)).isOne());
-    assertTrue(BigInteger("100000000000") / (BigInteger("3")) == BigInteger("33333333333"));
-    assertTrue(BigInteger("100000000000") % (BigInteger("3")) == BigInteger("1"));
-    assertTrue(BigInteger("123456789") / (BigInteger("33")) == BigInteger("3741114"));
-    assertTrue(BigInteger("123456789") % (BigInteger("33")) == BigInteger("27"));
-    assertTrue(BigInteger("987654321") / (BigInteger("345")) == BigInteger("2862766"));
-    assertTrue(BigInteger("987654321") % (BigInteger("345")) == BigInteger("51"));
+    assertTrue((f * Fraction(3, 15)).isOne());
     return 0;
 }
