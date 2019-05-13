@@ -73,7 +73,7 @@ int main()
         A.push_back(vector);
     }
 
-    Tabloid firstTabloid(Vectors::zeros(n), Matrixes::identity(n), A, B, C, 0);
+    Tabloid firstTabloid(A, B, C, 0);
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
     vector<Coordinate> auxiliarBase = auxiliar.findBase();
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);

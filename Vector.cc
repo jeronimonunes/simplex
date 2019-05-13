@@ -1,78 +1,60 @@
 #include "Vector.hh"
 #include "Fraction.hh"
 
-namespace Vectors
+Vector::Vector()
 {
-
-Vector zeros(int qtd)
-{
-    return repeat(0, qtd);
 }
 
-Vector repeat(Fraction frac, int qtd)
+// Create a vector with n positions filled with frac
+Vector::Vector(Fraction frac, int n)
 {
-    Vector result;
-    while (qtd-- > 0)
-        result.push_back(frac);
-    return result;
+    while (n-- > 0)
+        this->push_back(frac);
 }
 
-Vector copy(Vector other)
+// Create a zero vector with n positions
+Vector::Vector(int n) : Vector(0, n)
+{
+}
+
+Vector Vector::copy() const
 {
     Vector result;
-    while (result.size() < other.size())
+    while (result.size() < this->size())
     {
-        result.push_back(other[result.size()]);
+        result.push_back(this->at(result.size()));
     }
     return result;
 }
 
-Vector concat(Vector a, Vector b)
+Vector Vector::concat(const Vector &b) const
 {
     Vector result;
-    while (result.size() < a.size())
+    while (result.size() < this->size())
     {
-        result.push_back(a[result.size()]);
+        result.push_back(this->at(result.size()));
     }
-    while (result.size() - a.size() < b.size())
+    while (result.size() - this->size() < b.size())
     {
-        result.push_back(b[result.size() - a.size()]);
-    }
-    return result;
-}
-
-} // namespace Vectors
-
-Vector operator+(Vector &a, Vector &b)
-{
-    Vector result;
-    for (int i = 0; i < a.size() && i < b.size(); i++)
-    {
-        result.push_back(a[i] + b[i]);
+        result.push_back(b[result.size() - this->size()]);
     }
     return result;
 }
 
-Vector operator+(Vector &a, Vector b)
+Vector Vector::operator+(const Vector &b) const
 {
     Vector result;
-    for (int i = 0; i < a.size() && i < b.size(); i++)
+    for (int i = 0; i < this->size() && i < b.size(); i++)
     {
-        result.push_back(a[i] + b[i]);
+        result.push_back(this->at(i) + b[i]);
     }
     return result;
 }
 
-Vector operator*(Vector &a, Fraction &b)
+Vector Vector::operator*(const Fraction &b) const
 {
     Vector result;
-    while (result.size() < a.size())
-        result.push_back(a[result.size()] * b);
+    while (result.size() < this->size())
+        result.push_back(this->at(result.size()) * b);
     return result;
-}
-
-Vector operator*(Vector &a, int b)
-{
-    Fraction fb = b;
-    return a * fb;
 }

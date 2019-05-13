@@ -1,11 +1,12 @@
 #include "Matrix.hh"
 #include "Vector.hh"
 
-namespace Matrixes
+Matrix::Matrix()
 {
-Matrix identity(int n)
+}
+
+Matrix::Matrix(int n)
 {
-    Matrix result;
     for (int i = 0; i < n; i++)
     {
         Vector line;
@@ -20,20 +21,17 @@ Matrix identity(int n)
                 line.push_back(0);
             }
         }
-        result.push_back(line);
+        this->push_back(line);
     }
-    return result;
 }
 
-Matrix copy(Matrix m)
+Matrix Matrix::copy() const
 {
     Matrix result;
-    while (result.size() < m.size())
+    while (result.size() < this->size())
     {
-        Vector line = Vectors::copy(m[result.size()]);
+        Vector line = this->at(result.size()).copy();
         result.push_back(line);
     }
     return result;
 }
-
-} // namespace Matrixes

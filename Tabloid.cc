@@ -12,9 +12,13 @@ Tabloid::Tabloid(Vector certificate, Matrix certificateMatrix, Matrix A, Vector 
     this->v = v;
 }
 
+Tabloid::Tabloid(Matrix A, Vector B, Vector C, Fraction v) : Tabloid(Vector(B.size()), Matrix(B.size()), A, B, C, v)
+{
+}
+
 Tabloid Tabloid::makeAuxiliarSimplex()
 {
-    Matrix A = Matrixes::copy(this->A);
+    Matrix A = this->A.copy();
     for (int i = 0; i < this->A.size(); i++)
     {
         for (int j = 0; j < this->A.size(); j++)
@@ -22,7 +26,7 @@ Tabloid Tabloid::makeAuxiliarSimplex()
             A[i].push_back(i == j ? 1 : 0);
         }
     }
-    Vector C = Vectors::concat(Vectors::zeros(this->C.size()), Vectors::repeat(1, A.size()));
+    Vector C = Vector(this->C.size()).concat(Vector(1, A.size()));
     return Tabloid(this->certificate, this->certificateMatrix, A, this->B, C, 0);
 }
 
@@ -62,11 +66,11 @@ Coordinate Tabloid::findBaseColumn(int idx)
 
 Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
 {
-    Vector certificate = Vectors::copy(this->certificate);
-    Matrix certificateMatrix = Matrixes::copy(this->certificateMatrix);
-    Vector C = Vectors::copy(this->C);
-    Matrix A = Matrixes::copy(this->A);
-    Vector B = Vectors::copy(this->B);
+    Vector certificate = this->certificate.copy();
+    Matrix certificateMatrix = this->certificateMatrix.copy();
+    Vector C = this->C.copy();
+    Matrix A = this->A.copy();
+    Vector B = this->B.copy();
     Fraction v = this->v;
 
     for (int u = 0; u < base.size(); u++)
@@ -204,5 +208,5 @@ Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, std::vector<Coordinate> auxili
             output.push_back(coord);
         }
     }
-    return Tabloid(Vectors::repeat(0, A.size()), t.certificateMatrix, A, t.B, this->C, 0);
+    return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0);
 }

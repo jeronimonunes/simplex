@@ -4,19 +4,17 @@
 #include <vector>
 #include "Fraction.hh"
 
-typedef std::vector<Fraction> Vector;
-
-namespace Vectors
+class Vector : public std::vector<Fraction>
 {
-Vector copy(Vector v);
-Vector zeros(int n);
-Vector repeat(Fraction frac, int n);
-Vector concat(Vector a, Vector b);
-}; // namespace Vectors
+public:
+    explicit Vector();
+    explicit Vector(int n);
+    explicit Vector(const Fraction frac, int n);
+    Vector copy() const;
+    Vector concat(const Vector &other) const;
 
-Vector operator+(Vector &a, Vector &b);
-Vector operator+(Vector &a, Vector b);
-Vector operator*(Vector &a, Fraction &b);
-Vector operator*(Vector &a, int b);
+    Vector operator+(const Vector &x) const;
+    Vector operator*(const Fraction &x) const;
+};
 
 #endif
