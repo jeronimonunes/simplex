@@ -2,6 +2,9 @@
 #include <limits>
 #include <sstream>
 #include "bigint/BigIntegerUtils.hh"
+#include <iomanip>
+
+using namespace std;
 
 Fraction::Fraction(BigInteger numerator, BigInteger denominator)
 {
@@ -80,7 +83,7 @@ Fraction Fraction::invert() const
 
 double toDouble(const BigInteger &v)
 {
-    std::stringstream ss;
+    stringstream ss;
     ss << v;
     double d;
     ss >> d;
@@ -101,7 +104,7 @@ double Fraction::eval() const
     double denominator = toDouble(this->denominator);
     if (denominator == 0)
     {
-        return std::numeric_limits<double>::quiet_NaN();
+        return numeric_limits<double>::quiet_NaN();
     }
     return numerator / denominator;
 }
@@ -156,4 +159,9 @@ Fraction Fraction::operator/(const Fraction v) const
 Fraction Fraction::operator-() const
 {
     return Fraction(this->numerator * -1, this->denominator);
+}
+
+ostream &operator <<(ostream &os, const Fraction &x) {
+    cout << setprecision(7) << fixed << x.eval();
+    return os;
 }

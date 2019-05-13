@@ -4,3 +4,5 @@ testsuite
 testsuite.expected
 testsuite.out
 testsuite.err
+sample.ilk
+sample.pdb

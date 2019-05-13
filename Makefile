@@ -1,7 +1,7 @@
 CC=g++ -g -Ofast
 
-all: Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o Io.o
-	$(CC) -o a.exe Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o Io.o bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
+all: Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o
+	$(CC) -o a.exe Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
 
 test: Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc BigInteger.o
 	$(CC) -o test.exe Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc BigInteger.o
@@ -24,9 +24,6 @@ Tabloid.o: Tabloid.cc Tabloid.hh
 
 Coordinate.o: Coordinate.cc Coordinate.hh
 	$(CC) -c Coordinate.cc
-
-Io.o: Io.cc Io.hh
-	$(CC) -c Io.cc
 
 clean:
 	rm *.o a.exe

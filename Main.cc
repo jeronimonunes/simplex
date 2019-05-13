@@ -2,7 +2,6 @@
 #include "Matrix.hh"
 #include "Tabloid.hh"
 #include "Matrix.hh"
-#include "Io.hh"
 #include <iostream>
 
 using namespace std;
@@ -88,14 +87,13 @@ int main()
     }
     if (auxiliar.v.isNegative())
     {
-        print("inviavel\n");
-        print(auxiliar.certificate[0].eval());
+        cout << "inviavel" << endl;
+        cout << auxiliar.certificate[0];
         for (int i = 1; i < auxiliar.certificate.size(); i++)
         {
-            print(" ");
-            print(auxiliar.certificate[i].eval());
+            cout << " " << auxiliar.certificate[i];
         }
-        print("\n");
+        cout << endl;
     }
     else
     {
@@ -148,40 +146,38 @@ int main()
         }
         if (!otima)
         {
-            print("ilimitada\n");
+            cout << "ilimitada" << endl;
         }
         else
         {
-            print("otima\n");
-            print(tabloid.v.eval());
-            print("\n");
+            cout << "otima" << endl;
+            cout << tabloid.v << endl;
         }
-        print(result[0].eval());
+        cout << result[0];
         for (int i = 1; i < m; i++)
         {
-            print(" ");
-            print(result[i].eval());
+            cout << " " << result[i];
         }
-        print("\n");
+        cout << endl;
         if (otima)
         {
             for (int i = 0; i < tabloid.certificate.size(); i++)
             {
                 if (i)
-                    print(" ");
-                print(tabloid.certificate[i].eval());
+                    cout << " ";
+                cout << tabloid.certificate[i];
             }
-            print("\n");
+            cout << endl;
         }
         else
         {
             for (int i = 0; i < m; i++)
             {
                 if (i)
-                    print(" ");
+                    cout << " ";
                 if (tabloid.C[i].isNegative())
                 {
-                    print(1);
+                    cout << Fraction(1);
                 }
                 else
                 {
@@ -195,15 +191,15 @@ int main()
                     }
                     if (coord != NULL_COORDINATE)
                     {
-                        print(-tabloid.A[coord.x][negativeColumn].eval());
+                        cout << -tabloid.A[coord.x][negativeColumn];
                     }
                     else
                     {
-                        print(0);
+                        cout << Fraction(0);
                     }
                 }
             }
-            print("\n");
+            cout << endl;
         }
     }
     return 0;

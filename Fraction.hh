@@ -2,6 +2,7 @@
 #define FRACTION_HH
 
 #include "bigint/BigInteger.hh"
+#include <iostream>
 
 class Fraction
 {
@@ -29,5 +30,7 @@ public:
 
     double eval() const;
 };
+
+std::ostream &operator <<(std::ostream &os, const Fraction &x);
 
 #endif

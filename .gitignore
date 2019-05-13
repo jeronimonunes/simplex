@@ -2,3 +2,5 @@
 *.o
 a.exe
 output
+a.ilk
+a.pdb

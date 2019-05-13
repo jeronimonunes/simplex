@@ -1,9 +1,10 @@
+CC=g++ -g -Ofast
 # Mention default target.
 all:
 
 # Implicit rule to compile C++ files.  Modify to your taste.
 %.o: %.cc
-	g++ -c -Ofast -Wall -Wextra -pedantic $<
+	$(CC) -c -Ofast -Wall -Wextra -pedantic $<
 
 # Components of the library.
 library-objects = \
@@ -31,7 +32,7 @@ $(library-objects): $(library-headers)
 # Compiling the testsuite.
 testsuite.o: $(library-headers)
 testsuite: testsuite.o $(library-objects)
-	g++ $^ -o $@
+	$(CC) $^ -o $@
 # Extract the expected output from the testsuite source.
 testsuite.expected: testsuite.cc
 	nl -ba -p -s: $< | sed -nre 's,^ +([0-9]+):.*//([^ ]),Line \1: \2,p' >$@
@@ -58,7 +59,7 @@ $(program-objects) : $(library-headers)
 
 # How to link the program.  The implicit rule covers individual objects.
 $(program) : $(program-objects) $(library-objects)
-	g++ $^ -o $@
+	$(CC) $^ -o $@
 
 # Delete all generated files we know about.
 clean :
