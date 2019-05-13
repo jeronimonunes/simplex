@@ -104,7 +104,7 @@ int main()
             enter = tabloid.getCoordinateToEnterBase(base);
         }
         Vector result;
-        for (int y = 0; y < tabloid.C.size(); y++)
+        for (int y = 0; y < m; y++)
         {
             Fraction v = tabloid.C[y];
             if (v.isZero())
