@@ -8,20 +8,20 @@ using namespace std;
 
 Fraction::Fraction(BigInteger numerator, BigInteger denominator)
 {
-    if (numerator == 0L)
+    if (numerator == 0)
     {
-        this->numerator = 0L;
-        this->denominator = 1L;
+        this->numerator = 0;
+        this->denominator = 1;
     }
-    else if (numerator % denominator == 0L)
+    else if (numerator % denominator == 0)
     {
         this->numerator = numerator / denominator;
-        this->denominator = 1L;
+        this->denominator = 1;
     }
-    else if (denominator < 0L)
+    else if (denominator < 0)
     {
-        this->numerator = numerator * -1L;
-        this->denominator = denominator * -1L;
+        this->numerator = numerator * -1;
+        this->denominator = denominator * -1;
     }
     else
     {
@@ -36,7 +36,7 @@ Fraction::Fraction()
     this->denominator = 1;
 }
 
-Fraction::Fraction(int numerator)
+Fraction::Fraction(long numerator)
 {
     this->numerator = numerator;
     this->denominator = 1;
@@ -44,28 +44,28 @@ Fraction::Fraction(int numerator)
 
 bool Fraction::isZero() const
 {
-    return this->numerator == 0L;
+    return this->numerator == 0;
 }
 
 bool Fraction::isOne() const
 {
-    return this->numerator != 0L && this->numerator == this->denominator;
+    return this->numerator != 0 && this->numerator == this->denominator;
 }
 
 bool Fraction::isPositive() const
 {
-    if (this->numerator > 0L && this->denominator > 0L)
+    if (this->numerator > 0 && this->denominator > 0)
         return true;
-    if (this->numerator < 0L && this->denominator < 0L)
+    if (this->numerator < 0 && this->denominator < 0)
         return true;
     return false;
 }
 
 bool Fraction::isNegative() const
 {
-    if (this->numerator > 0L && this->denominator < 0L)
+    if (this->numerator > 0 && this->denominator < 0)
         return true;
-    if (this->numerator < 0L && this->denominator > 0L)
+    if (this->numerator < 0 && this->denominator > 0)
         return true;
     return false;
 }
@@ -228,11 +228,11 @@ double toDouble(const BigInteger &v)
 
 double Fraction::eval() const
 {
-    if (this->denominator == 1L)
+    if (this->denominator == 1)
     {
         return toDouble(this->numerator);
     }
-    if (this->numerator == 0L)
+    if (this->numerator == 0)
     {
         return 0;
     }

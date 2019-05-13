@@ -13,7 +13,7 @@ public:
 
 public:
     Fraction();
-    Fraction(int i);
+    Fraction(long i);
     Fraction(BigInteger numerator, BigInteger denominator = 1);
 
     bool isOne() const;

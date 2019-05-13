@@ -35,3 +35,18 @@ Matrix Matrix::copy() const
     }
     return result;
 }
+
+Vector operator*(Vector &a, Matrix &b)
+{
+    Vector result;
+    for (int j = 0; j < b[0].size(); j++)
+    {
+        Fraction sum;
+        for (int i = 0; i < a.size(); i++)
+        {
+            sum += b[i][j] * a[i];
+        }
+        result.push_back(sum);
+    }
+    return result;
+}

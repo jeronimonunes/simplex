@@ -58,3 +58,26 @@ Vector Vector::operator*(const Fraction &b) const
         result.push_back(this->at(result.size()) * b);
     return result;
 }
+
+Fraction Vector::operator*(const Vector &x) const
+{
+    Fraction result;
+    for (int i = 0; i < this->size() && i < x.size(); i++)
+    {
+        result += this->at(i) * x[i];
+    }
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &os, const Vector &x)
+{
+    if (x.size() > 0)
+    {
+        os << x[0];
+        for (int i = 1; i < x.size(); i++)
+        {
+            os << " " << x[i];
+        }
+    }
+    return os;
+}

@@ -14,4 +14,7 @@ public:
     Matrix copy() const;
 };
 
+//calculates (a transposed) * b
+Vector operator*(Vector &a, Matrix &b);
+
 #endif

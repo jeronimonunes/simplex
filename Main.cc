@@ -29,7 +29,7 @@ int main()
     {
         long v;
         cin >> v;
-        C.push_back(Fraction(-v));
+        C.push_back(-v);
     }
     for (int i = 0; i < m; i++)
     {
@@ -43,7 +43,7 @@ int main()
         {
             long v;
             cin >> v;
-            vector.push_back(Fraction(v));
+            vector.push_back(v);
         }
         long b;
         cin >> b;
@@ -88,12 +88,7 @@ int main()
     if (auxiliar.v.isNegative())
     {
         cout << "inviavel" << endl;
-        cout << auxiliar.certificate[0];
-        for (int i = 1; i < auxiliar.certificate.size(); i++)
-        {
-            cout << " " << auxiliar.certificate[i];
-        }
-        cout << endl;
+        cout << auxiliar.certificate << endl;
     }
     else
     {
@@ -153,21 +148,10 @@ int main()
             cout << "otima" << endl;
             cout << tabloid.v << endl;
         }
-        cout << result[0];
-        for (int i = 1; i < m; i++)
-        {
-            cout << " " << result[i];
-        }
-        cout << endl;
+        cout << result << endl;
         if (otima)
         {
-            for (int i = 0; i < tabloid.certificate.size(); i++)
-            {
-                if (i)
-                    cout << " ";
-                cout << tabloid.certificate[i];
-            }
-            cout << endl;
+            cout << tabloid.certificate << endl;
         }
         else
         {
