@@ -19,11 +19,11 @@ Tabloid Tabloid::makeAuxiliarSimplex()
     {
         for (int j = 0; j < this->A.size(); j++)
         {
-            A[i].push_back(i == j ? one : zero);
+            A[i].push_back(i == j ? 1 : 0);
         }
     }
-    Vector C = Vectors::concat(Vectors::zeros(this->C.size()), Vectors::repeat(one, A.size()));
-    return Tabloid(this->certificate, this->certificateMatrix, A, this->B, C, zero);
+    Vector C = Vectors::concat(Vectors::zeros(this->C.size()), Vectors::repeat(1, A.size()));
+    return Tabloid(this->certificate, this->certificateMatrix, A, this->B, C, 0);
 }
 
 std::vector<Coordinate> Tabloid::findBase()
@@ -81,11 +81,11 @@ Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
         else
         {
             Fraction fix = pline[coord.y].invert();
-            pline = Vectors::multiply(pline, fix);
-            cpline = Vectors::multiply(cpline, fix);
+            pline = pline * fix;
+            cpline = cpline * fix;
             A[coord.x] = pline;
             certificateMatrix[coord.x] = cpline;
-            B[coord.x] = B[coord.x].multiply(fix);
+            B[coord.x] = B[coord.x] * fix;
         }
         if (C[coord.y].isZero())
         {
@@ -93,10 +93,10 @@ Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
         }
         else
         { //fix c
-            Fraction fix = C[coord.y].multiply(neg);
-            C = Vectors::sum(C, Vectors::multiply(pline, fix));
-            certificate = Vectors::sum(certificate, Vectors::multiply(cpline, fix));
-            v = v.add(B[coord.x].multiply(fix));
+            Fraction fix = -C[coord.y];
+            C = C + pline * fix;
+            certificate = certificate + cpline * fix;
+            v = v + B[coord.x] * fix;
         }
         for (int i = 0; i < A.size(); i++)
         {
@@ -110,12 +110,12 @@ Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
                 }
                 else
                 {
-                    Fraction fix = aLine[coord.y].multiply(neg);
-                    aLine = Vectors::sum(aLine, Vectors::multiply(pline, fix));
-                    cLine = Vectors::sum(cLine, Vectors::multiply(cpline, fix));
+                    Fraction fix = -aLine[coord.y];
+                    aLine = aLine + pline * fix;
+                    cLine = cLine + cpline * fix;
                     A[i] = aLine;
                     certificateMatrix[i] = cLine;
-                    B[i] = B[i].add(B[coord.x].multiply(fix));
+                    B[i] = B[i] + B[coord.x] * fix;
                 }
             }
         }
@@ -146,8 +146,8 @@ Coordinate Tabloid::getCoordinateToEnterBase(std::vector<Coordinate> base)
             {
                 if (this->A[i][j].isPositive())
                 {
-                    Fraction value = this->B[i].divide(this->A[i][j]);
-                    if(oldIndex == -1 || value < oldValue)
+                    Fraction value = this->B[i] / this->A[i][j];
+                    if (oldIndex == -1 || value < oldValue)
                     {
                         oldIndex = i;
                         oldValue = value;
@@ -166,32 +166,43 @@ Coordinate Tabloid::getCoordinateToEnterBase(std::vector<Coordinate> base)
 Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, std::vector<Coordinate> auxiliarBase, std::vector<Coordinate> &output)
 {
     Matrix A;
-    for(int i = 0; i < t.A.size(); i++) {
+    for (int i = 0; i < t.A.size(); i++)
+    {
         Vector line;
-        for(int j = 0; j < this->C.size(); j++) {
+        for (int j = 0; j < this->C.size(); j++)
+        {
             line.push_back(t.A[i][j]);
         }
         A.push_back(line);
     }
-    for(int i = 0; i < auxiliarBase.size(); i++) {
+    for (int i = 0; i < auxiliarBase.size(); i++)
+    {
         Coordinate coord = auxiliarBase[i];
-        if(coord.y >= this->C.size()) {
+        if (coord.y >= this->C.size())
+        {
             int y = -1;
-            for(int j = 0; j < A[coord.x].size(); j++) {
+            for (int j = 0; j < A[coord.x].size(); j++)
+            {
                 Fraction column = A[coord.x][j];
-                if(!column.isZero()) {
+                if (!column.isZero())
+                {
                     y = j;
                 }
             }
-            if(y >= 0) {
+            if (y >= 0)
+            {
                 output.push_back(Coordinate(coord.x, y));
-            } else {
-                //potential for seg fault 
+            }
+            else
+            {
+                //potential for seg fault
                 output.push_back(NULL_COORDINATE);
             }
-        } else {
+        }
+        else
+        {
             output.push_back(coord);
         }
     }
-    return Tabloid(Vectors::repeat(zero, A.size()), t.certificateMatrix, A, t.B, this->C, zero);
+    return Tabloid(Vectors::repeat(0, A.size()), t.certificateMatrix, A, t.B, this->C, 0);
 }

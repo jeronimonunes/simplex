@@ -3,10 +3,6 @@
 #include <sstream>
 #include "bigint/BigIntegerUtils.hh"
 
-Fraction zero(0L);
-Fraction one(1L);
-Fraction neg(-1L);
-
 Fraction::Fraction(BigInteger numerator, BigInteger denominator)
 {
     if (numerator == 0L)
@@ -33,60 +29,26 @@ Fraction::Fraction(BigInteger numerator, BigInteger denominator)
 
 Fraction::Fraction()
 {
-    this->numerator = 0L;
-    this->denominator = 1L;
+    this->numerator = 0;
+    this->denominator = 1;
 }
 
-Fraction::Fraction(BigInteger numerator)
+Fraction::Fraction(int numerator) : Fraction(BigInteger(numerator), 1)
 {
-    this->numerator = numerator;
-    this->denominator = 1L;
+    
 }
 
-Fraction Fraction::multiply(Fraction v)
-{
-    if (this->isZero() || v.isZero())
-    {
-        return zero;
-    }
-    else
-    {
-        return Fraction(this->numerator * v.numerator, this->denominator * v.denominator);
-    }
-}
-
-Fraction Fraction::divide(Fraction v)
-{
-    return this->multiply(v.invert());
-}
-
-Fraction Fraction::add(Fraction v)
-{
-    if (this->isZero())
-    {
-        return v;
-    }
-    else if (v.isZero())
-    {
-        return *this;
-    }
-    else
-    {
-        return Fraction(this->numerator * v.denominator + this->denominator * v.numerator, this->denominator * v.denominator);
-    }
-}
-
-bool Fraction::isZero()
+bool Fraction::isZero() const
 {
     return this->numerator == 0L;
 }
 
-bool Fraction::isOne()
+bool Fraction::isOne() const
 {
     return this->numerator != 0L && this->numerator == this->denominator;
 }
 
-bool Fraction::isPositive()
+bool Fraction::isPositive() const
 {
     if (this->numerator > 0L && this->denominator > 0L)
         return true;
@@ -95,7 +57,7 @@ bool Fraction::isPositive()
     return false;
 }
 
-bool Fraction::isNegative()
+bool Fraction::isNegative() const
 {
     if (this->numerator > 0L && this->denominator < 0L)
         return true;
@@ -104,11 +66,11 @@ bool Fraction::isNegative()
     return false;
 }
 
-Fraction Fraction::invert()
+Fraction Fraction::invert() const
 {
     if (this->isZero())
     {
-        return zero;
+        return 0;
     }
     else
     {
@@ -116,7 +78,7 @@ Fraction Fraction::invert()
     }
 }
 
-double toDouble(BigInteger &v)
+double toDouble(const BigInteger &v)
 {
     std::stringstream ss;
     ss << v;
@@ -125,7 +87,7 @@ double toDouble(BigInteger &v)
     return d;
 }
 
-double Fraction::eval()
+double Fraction::eval() const
 {
     if (this->denominator == 1L)
     {
@@ -146,11 +108,52 @@ double Fraction::eval()
 
 bool Fraction::operator<(const Fraction &x) const
 {
-    if(this->denominator == x.denominator) {
+    if (this->denominator == x.denominator)
+    {
         return this->numerator < x.numerator;
-    } else {
+    }
+    else
+    {
         BigInteger a = this->numerator * x.denominator;
         BigInteger b = x.numerator * this->denominator;
         return a < b;
     }
+}
+
+Fraction Fraction::operator+(const Fraction v) const
+{
+    if (isZero())
+    {
+        return v;
+    }
+    else if (v.isZero())
+    {
+        return *this;
+    }
+    else
+    {
+        return Fraction(this->numerator * v.denominator + this->denominator * v.numerator, this->denominator * v.denominator);
+    }
+}
+
+Fraction Fraction::operator*(const Fraction v) const
+{
+    if (this->isZero() || v.isZero())
+    {
+        return 0;
+    }
+    else
+    {
+        return Fraction(this->numerator * v.numerator, this->denominator * v.denominator);
+    }
+}
+
+Fraction Fraction::operator/(const Fraction v) const
+{
+    return (*this) * v.invert();
+}
+
+Fraction Fraction::operator-() const
+{
+    return Fraction(this->numerator * -1, this->denominator);
 }

@@ -6,7 +6,7 @@ namespace Vectors
 
 Vector zeros(int qtd)
 {
-    return repeat(zero, qtd);
+    return repeat(0, qtd);
 }
 
 Vector repeat(Fraction frac, int qtd)
@@ -41,22 +41,32 @@ Vector concat(Vector a, Vector b)
     return result;
 }
 
-Vector multiply(Vector a, Fraction b)
-{
-    Vector result;
-    while (result.size() < a.size())
-        result.push_back(a[result.size()].multiply(b));
-    return result;
-}
+} // namespace Vectors
 
-Vector sum(Vector a, Vector b)
+Vector operator+(Vector &a, Vector &b)
 {
     Vector result;
     for (int i = 0; i < a.size() && i < b.size(); i++)
     {
-        result.push_back(a[i].add(b[i]));
+        result.push_back(a[i] + b[i]);
     }
     return result;
 }
 
-} // namespace Vectors
+Vector operator+(Vector &a, Vector b)
+{
+    Vector result;
+    for (int i = 0; i < a.size() && i < b.size(); i++)
+    {
+        result.push_back(a[i] + b[i]);
+    }
+    return result;
+}
+
+Vector operator*(Vector &a, Fraction &b)
+{
+    Vector result;
+    while (result.size() < a.size())
+        result.push_back(a[result.size()] * b);
+    return result;
+}

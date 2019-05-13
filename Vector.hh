@@ -12,8 +12,10 @@ Vector copy(Vector v);
 Vector zeros(int n);
 Vector repeat(Fraction frac, int n);
 Vector concat(Vector a, Vector b);
-Vector multiply(Vector a, Fraction b);
-Vector sum(Vector a, Vector b);
 }; // namespace Vectors
+
+Vector operator+(Vector &a, Vector &b);
+Vector operator+(Vector &a, Vector b);
+Vector operator*(Vector &a, Fraction &b);
 
 #endif

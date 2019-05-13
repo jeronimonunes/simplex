@@ -12,25 +12,22 @@ public:
 
 public:
     Fraction();
-    Fraction(BigInteger numerator);
-    Fraction(BigInteger numerator, BigInteger denominator);
-    Fraction multiply(Fraction f);
-    Fraction divide(Fraction f);
-    Fraction add(Fraction f);
+    Fraction(int i);
+    Fraction(BigInteger numerator, BigInteger denominator = 1);
 
-    bool isOne();
-    bool isZero();
-    bool isNegative();
-    bool isPositive();
-    bool operator < (const Fraction &x) const ;
+    bool isOne() const;
+    bool isZero() const;
+    bool isNegative() const;
+    bool isPositive() const;
+    bool operator<(const Fraction &x) const;
+    Fraction operator+(const Fraction x) const;
+    Fraction operator*(const Fraction x) const;
+    Fraction operator/(const Fraction x) const;
+    Fraction operator-() const;
 
-    Fraction invert();
+    Fraction invert() const;
 
-    double eval();
+    double eval() const;
 };
-
-extern Fraction zero;
-extern Fraction one;
-extern Fraction neg;
 
 #endif

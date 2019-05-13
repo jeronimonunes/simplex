@@ -13,11 +13,11 @@ Matrix identity(int n)
         {
             if (i == j)
             {
-                line.push_back(one);
+                line.push_back(1);
             }
             else
             {
-                line.push_back(zero);
+                line.push_back(0);
             }
         }
         result.push_back(line);

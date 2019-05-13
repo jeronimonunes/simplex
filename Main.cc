@@ -34,7 +34,7 @@ int main()
     }
     for (int i = 0; i < m; i++)
     {
-        C.push_back(zero);
+        C.push_back(0);
     }
 
     while (A.size() < n)
@@ -53,7 +53,7 @@ int main()
         {
             for (int i = 0; i < m; i++)
             {
-                vector[i] = vector[i].multiply(neg);
+                vector[i] = -vector[i];
             }
         }
         //creating auxiliar variables
@@ -62,11 +62,11 @@ int main()
             Fraction v;
             if (i == A.size())
             {
-                v = negative ? neg : one;
+                v = negative ? -1 : 1;
             }
             else
             {
-                v = zero;
+                v = 0;
             }
             vector.push_back(v);
         }
@@ -74,7 +74,7 @@ int main()
         A.push_back(vector);
     }
 
-    Tabloid firstTabloid(Vectors::zeros(n), Matrixes::identity(n), A, B, C, zero);
+    Tabloid firstTabloid(Vectors::zeros(n), Matrixes::identity(n), A, B, C, 0);
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
     vector<Coordinate> auxiliarBase = auxiliar.findBase();
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
@@ -127,12 +127,12 @@ int main()
                 }
                 if (!found)
                 {
-                    result.push_back(zero);
+                    result.push_back(0);
                 }
             }
             else
             {
-                result.push_back(zero);
+                result.push_back(0);
             }
         }
         bool otima = true;
@@ -149,7 +149,6 @@ int main()
         if (!otima)
         {
             print("ilimitada\n");
-            //TODO certificate;
         }
         else
         {
@@ -196,7 +195,7 @@ int main()
                     }
                     if (coord != NULL_COORDINATE)
                     {
-                        print(tabloid.A[coord.x][negativeColumn].multiply(neg).eval());
+                        print(-tabloid.A[coord.x][negativeColumn].eval());
                     }
                     else
                     {
