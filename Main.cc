@@ -45,35 +45,24 @@ int main()
             cin >> v;
             vector.push_back(v);
         }
-        long b;
-        cin >> b;
-        bool negative = b < 0L;
-        if (negative)
-        {
-            for (int i = 0; i < m; i++)
-            {
-                vector[i] = -vector[i];
-            }
-        }
         //creating auxiliar variables
         for (int i = 0; i < m; i++)
         {
             Fraction v;
             if (i == A.size())
-            {
-                v = negative ? -1 : 1;
-            }
+                v = 1;
             else
-            {
                 v = 0;
-            }
             vector.push_back(v);
         }
-        B.push_back(Fraction(negative ? -b : b));
+        long b;
+        cin >> b;
+        B.push_back(b);
         A.push_back(vector);
     }
 
     Tabloid firstTabloid(A, B, C, 0);
+    firstTabloid.fixNegativeB();
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
     vector<Coordinate> auxiliarBase = auxiliar.findBase();
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);

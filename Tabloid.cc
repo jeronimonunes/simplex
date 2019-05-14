@@ -16,6 +16,19 @@ Tabloid::Tabloid(Matrix A, Vector B, Vector C, Fraction v) : Tabloid(Vector(B.si
 {
 }
 
+void Tabloid::fixNegativeB()
+{
+    for (int i = 0; i < this->B.size(); i++)
+    {
+        if (B[i].isNegative())
+        {
+            this->A[i] = -this->A[i];
+            this->certificateMatrix[i] = -this->certificateMatrix[i];
+            B[i] = -B[i];
+        }
+    }
+}
+
 Tabloid Tabloid::makeAuxiliarSimplex()
 {
     Matrix A = this->A.copy();

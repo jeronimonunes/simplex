@@ -22,6 +22,7 @@ public:
 public:
     Tabloid(Vector certificate, Matrix certificateMatrix, Matrix A, Vector B, Vector C, Fraction v);
     Tabloid(Matrix A, Vector B, Vector C, Fraction v);
+    void fixNegativeB();
     Tabloid makeAuxiliarSimplex();
     std::vector<Coordinate> findBase();
     Tabloid makeBaseUsable(std::vector<Coordinate> base);

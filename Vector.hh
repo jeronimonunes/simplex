@@ -16,6 +16,7 @@ public:
     Vector operator+(const Vector &x) const;
     Vector operator*(const Fraction &x) const;
     Fraction operator*(const Vector &x) const;
+    Vector operator -() const;
 };
 
 /**

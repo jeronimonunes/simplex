@@ -69,6 +69,16 @@ Fraction Vector::operator*(const Vector &x) const
     return result;
 }
 
+Vector Vector::operator-() const
+{
+    Vector result;
+    for (int i = 0; i < this->size(); i++)
+    {
+        result.push_back(-this->at(i));
+    }
+    return result;
+}
+
 std::ostream &operator<<(std::ostream &os, const Vector &x)
 {
     if (x.size() > 0)
