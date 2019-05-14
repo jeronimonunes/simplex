@@ -70,96 +70,53 @@ bool Fraction::isNegative() const
     return false;
 }
 
-bool Fraction::operator==(const Fraction& x) const {
-    if(this->denominator == x.denominator) {
-        return this->numerator == x.numerator;
-    } else {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a == b;
+Fraction::CmpRes Fraction::compareTo(const Fraction &frac) const
+{
+    if (this->denominator == frac.denominator)
+    {
+        return this->numerator.compareTo(frac.numerator);
+    }
+    else
+    {
+        BigInteger a = this->numerator * frac.denominator;
+        BigInteger b = frac.numerator * this->denominator;
+        return a.compareTo(b);
     }
 }
 
-bool Fraction::operator!=(const Fraction& x) const {
-    if(this->denominator == x.denominator) {
-        return this->numerator != x.numerator;
-    } else {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a != b;
-    }
+bool Fraction::operator==(const Fraction &x) const
+{
+    return this->compareTo(x) == Fraction::equal;
+}
+
+bool Fraction::operator!=(const Fraction &x) const
+{
+    return this->compareTo(x) != Fraction::equal;
 }
 
 bool Fraction::operator<(const Fraction &x) const
 {
-    if (this->denominator == x.denominator)
-    {
-        return this->numerator < x.numerator;
-    }
-    else
-    {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a < b;
-    }
+    return this->compareTo(x) == Fraction::less;
 }
 
 bool Fraction::operator>(const Fraction &x) const
 {
-    if (this->denominator == x.denominator)
-    {
-        return this->numerator > x.numerator;
-    }
-    else
-    {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a > b;
-    }
+    return this->compareTo(x) == Fraction::greater;
 }
 
 bool Fraction::operator<=(const Fraction &x) const
 {
-    if (this->denominator == x.denominator)
-    {
-        return this->numerator <= x.numerator;
-    }
-    else
-    {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a <= b;
-    }
+    return this->compareTo(x) != Fraction::greater;
 }
 
 bool Fraction::operator>=(const Fraction &x) const
 {
-    if (this->denominator == x.denominator)
-    {
-        return this->numerator >= x.numerator;
-    }
-    else
-    {
-        BigInteger a = this->numerator * x.denominator;
-        BigInteger b = x.numerator * this->denominator;
-        return a >= b;
-    }
+    return this->compareTo(x) != Fraction::less;
 }
 
 Fraction Fraction::operator+(const Fraction &v) const
 {
-    if (isZero())
-    {
-        return v;
-    }
-    else if (v.isZero())
-    {
-        return *this;
-    }
-    else
-    {
-        return Fraction(this->numerator * v.denominator + this->denominator * v.numerator, this->denominator * v.denominator);
-    }
+    return Fraction(this->numerator * v.denominator + this->denominator * v.numerator, this->denominator * v.denominator);
 }
 
 Fraction Fraction::operator-(const Fraction &v) const
@@ -169,14 +126,7 @@ Fraction Fraction::operator-(const Fraction &v) const
 
 Fraction Fraction::operator*(const Fraction &v) const
 {
-    if (this->isZero() || v.isZero())
-    {
-        return 0;
-    }
-    else
-    {
-        return Fraction(this->numerator * v.numerator, this->denominator * v.denominator);
-    }
+    return Fraction(this->numerator * v.numerator, this->denominator * v.denominator);
 }
 
 Fraction Fraction::operator/(const Fraction &v) const
@@ -189,32 +139,33 @@ Fraction Fraction::operator-() const
     return Fraction(this->numerator * -1, this->denominator);
 }
 
-void Fraction::operator +=(const Fraction &x) {
+void Fraction::operator+=(const Fraction &x)
+{
     (*this) = (*this) + x;
 }
 
-void Fraction::operator -=(const Fraction &x){
+void Fraction::operator-=(const Fraction &x)
+{
     (*this) = (*this) - x;
 }
 
-void Fraction::operator *=(const Fraction &x){
+void Fraction::operator*=(const Fraction &x)
+{
     (*this) = (*this) * x;
 }
 
-void Fraction::operator /=(const Fraction &x){
+void Fraction::operator/=(const Fraction &x)
+{
     (*this) = (*this) / x;
 }
 
 Fraction Fraction::invert() const
 {
-    if (this->isZero())
-    {
+    //TODO maybe should throw an error
+    if ((*this) == 0)
         return 0;
-    }
     else
-    {
         return Fraction(this->denominator, this->numerator);
-    }
 }
 
 double toDouble(const BigInteger &v)
@@ -245,7 +196,8 @@ double Fraction::eval() const
     return numerator / denominator;
 }
 
-ostream &operator <<(ostream &os, const Fraction &x) {
+ostream &operator<<(ostream &os, const Fraction &x)
+{
     cout << setprecision(7) << fixed << x.eval();
     return os;
 }

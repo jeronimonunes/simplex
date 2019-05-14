@@ -6,10 +6,16 @@
 
 class Fraction
 {
-
-public:
+private:
     BigInteger numerator;
     BigInteger denominator;
+
+public:
+    typedef BigInteger::CmpRes CmpRes;
+    static const CmpRes
+        less = BigInteger::less,
+        equal = BigInteger::equal,
+        greater = BigInteger::greater;
 
 public:
     Fraction();
@@ -20,6 +26,8 @@ public:
     bool isZero() const;
     bool isNegative() const;
     bool isPositive() const;
+
+    CmpRes compareTo(const Fraction &frac) const;
 
     bool operator==(const Fraction &x) const;
     bool operator!=(const Fraction &x) const;
@@ -34,10 +42,10 @@ public:
     Fraction operator/(const Fraction &x) const;
     Fraction operator-() const;
 
-    void operator +=(const Fraction &x);
-	void operator -=(const Fraction &x);
-	void operator *=(const Fraction &x);
-	void operator /=(const Fraction &x);
+    void operator+=(const Fraction &x);
+    void operator-=(const Fraction &x);
+    void operator*=(const Fraction &x);
+    void operator/=(const Fraction &x);
 
     Fraction invert() const;
 
