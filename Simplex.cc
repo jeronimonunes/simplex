@@ -10,15 +10,8 @@ int findIndex(vector<Coordinate> base, int x)
     return -1; //potential for seg fault
 }
 
-void runSimplex(
-    Vector &certificate,
-    Matrix &certificateMatrix,
-    Matrix &A,
-    Vector &B,
-    Vector &C,
-    Fraction &v)
+void runSimplex(Tabloid& firstTabloid)
 {
-    Tabloid firstTabloid(certificate, certificateMatrix, A, B, C, 0);
     firstTabloid.fixNegativeB();
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
     vector<Coordinate> auxiliarBase = auxiliar.findBase();

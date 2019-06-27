@@ -1,7 +1,7 @@
 CC=g++ -g -Ofast
 
-all: Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o StringUtil.o Simplex.o
-	$(CC) -o a.exe Simplex.o StringUtil.o Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
+all: Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o StringUtil.o Simplex.o Io.o
+	$(CC) -o a.exe Io.o Simplex.o StringUtil.o Fraction.o Vector.o Matrix.o Tabloid.o Main.o Coordinate.o bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
 
 test: Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc
 	$(CC) -o test.exe Fraction.o Vector.o Matrix.o Tabloid.o Coordinate.o Tests.cc bigint/BigUnsigned.o bigint/BigInteger.o bigint/BigIntegerAlgorithms.o bigint/BigUnsignedInABase.o bigint/BigIntegerUtils.o
@@ -30,6 +30,9 @@ StringUtil.o: StringUtil.cc StringUtil.hh
 
 Simplex.o: Simplex.hh Simplex.cc
 	$(CC) -c Simplex.cc
+
+Io.o: Io.hh Io.cc
+	$(CC) -c Io.cc
 
 clean:
 	rm *.o a.exe
