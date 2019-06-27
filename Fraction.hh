@@ -3,10 +3,13 @@
 
 #include "bigint/BigInteger.hh"
 #include <iostream>
+#include <string>
+
+using namespace std;
 
 class Fraction
 {
-private:
+public:
     BigInteger numerator;
     BigInteger denominator;
 
@@ -16,6 +19,8 @@ public:
         less = BigInteger::less,
         equal = BigInteger::equal,
         greater = BigInteger::greater;
+    
+    static Fraction fromString(string&);
 
 public:
     Fraction();
@@ -48,8 +53,6 @@ public:
     void operator/=(const Fraction &x);
 
     Fraction invert() const;
-
-    double eval() const;
 };
 
 /**

@@ -1,10 +1,20 @@
 #include "Fraction.hh"
-#include <limits>
 #include <sstream>
 #include "bigint/BigIntegerUtils.hh"
-#include <iomanip>
+#include "StringUtil.hh"
 
 using namespace std;
+
+Fraction Fraction::fromString(string& s) {
+    vector<string> parts = explode(s, '/');
+    if(parts.size() == 1) {
+        return stringToBigInteger(parts[0]);
+    } else {
+        BigInteger numerator = stringToBigInteger(parts[0]);
+        BigInteger denominator = stringToBigInteger(parts[1]);
+        return Fraction(numerator, denominator);
+    }
+}
 
 Fraction::Fraction(BigInteger numerator, BigInteger denominator)
 {
@@ -177,27 +187,12 @@ double toDouble(const BigInteger &v)
     return d;
 }
 
-double Fraction::eval() const
-{
-    if (this->denominator == 1)
-    {
-        return toDouble(this->numerator);
-    }
-    if (this->numerator == 0)
-    {
-        return 0;
-    }
-    double numerator = toDouble(this->numerator);
-    double denominator = toDouble(this->denominator);
-    if (denominator == 0)
-    {
-        return numeric_limits<double>::quiet_NaN();
-    }
-    return numerator / denominator;
-}
-
 ostream &operator<<(ostream &os, const Fraction &x)
 {
-    cout << setprecision(7) << fixed << x.eval();
+    if(x.denominator == 1) {
+        os << x.numerator;
+    } else {
+        os << x.numerator << "/" << x.denominator;
+    }
     return os;
 }

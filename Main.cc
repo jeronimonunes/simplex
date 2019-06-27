@@ -1,174 +1,93 @@
 #include "Vector.hh"
 #include "Matrix.hh"
-#include "Tabloid.hh"
-#include "Matrix.hh"
+#include "StringUtil.hh"
+#include "Simplex.hh"
 #include <iostream>
 
 using namespace std;
 
-int findIndex(vector<Coordinate> base, int x)
-{
-    for (int i = 0; i < base.size(); i++)
-    {
-        if (base[i].x == x)
-            return i;
-    }
-    return -1; //potential for seg fault
-}
-
 int main()
 {
-    int n, m;
+    //Processing input
     Matrix A;
     Vector B;
     Vector C;
+    Vector certificate;
+    Matrix certificateMatrix;
+    Fraction v;
 
-    cin >> n >> m;
-
-    for (int i = 0; i < m; i++)
+    string line;
+    //tabloid header
+    if (!getline(cin, line))
     {
-        long v;
-        cin >> v;
-        C.push_back(-v);
-    }
-    for (int i = 0; i < m; i++)
-    {
-        C.push_back(0);
+        cerr << "Invalid input" << endl;
+        return -1;
     }
 
-    while (A.size() < n)
+    vector<string> pieces = explode(line, '|');
+    if (pieces.size() != 3)
     {
-        Vector vector;
-        for (int i = 0; i < m; i++)
-        {
-            long v;
-            cin >> v;
-            vector.push_back(v);
-        }
-        //creating auxiliar variables
-        for (int i = 0; i < m; i++)
-        {
-            vector.push_back(i == A.size() ? 1 : 0);
-        }
-        long b;
-        cin >> b;
-        B.push_back(b);
-        A.push_back(vector);
+        cerr << "Invalid input" << endl;
+        return -1;
     }
 
-    Tabloid firstTabloid(A, B, C, 0);
-    firstTabloid.fixNegativeB();
-    Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
-    vector<Coordinate> auxiliarBase = auxiliar.findBase();
-    auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
-    Coordinate enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
-    while (enter != NULL_COORDINATE)
+    vector<string> values = explode(pieces[0], ' ', '\t');
+    for (int i = 0; i < values.size(); i++)
     {
-        int leaveIdx = findIndex(auxiliarBase, enter.x);
-        auxiliarBase[leaveIdx] = enter;
-        auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
-        enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
+        certificate.push_back(Fraction::fromString(values[i]));
     }
-    if (auxiliar.v.isNegative())
+
+    values = explode(pieces[1], ' ', '\t');
+
+    for (int i = 0; i < values.size(); i++)
     {
-        cout << "inviavel" << endl;
-        cout << auxiliar.certificate << endl;
+        C.push_back(Fraction::fromString(values[i]));
     }
-    else
+
+    v = Fraction::fromString(values[2]);
+
+    //ignored line
+    if (!getline(cin, line))
     {
-        vector<Coordinate> base;
-        Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
-        tabloid = tabloid.makeBaseUsable(base);
-        enter = tabloid.getCoordinateToEnterBase(base);
-        while (enter != NULL_COORDINATE)
-        {
-            int leaveIdx = findIndex(base, enter.x);
-            base[leaveIdx] = enter;
-            tabloid = tabloid.makeBaseUsable(base);
-            enter = tabloid.getCoordinateToEnterBase(base);
-        }
-        Vector result;
-        for (int y = 0; y < m; y++)
-        {
-            Fraction v = tabloid.C[y];
-            if (v.isZero())
-            {
-                bool found = false;
-                for (int p = 0; p < base.size(); p++)
-                {
-                    if (base[p].y == y)
-                    {
-                        found = true;
-                        result.push_back(tabloid.B[base[p].x]);
-                    }
-                }
-                if (!found)
-                {
-                    result.push_back(0);
-                }
-            }
-            else
-            {
-                result.push_back(0);
-            }
-        }
-        bool otima = true;
-        int negativeColumn = -1;
-        for (int g = 0; g < tabloid.C.size(); g++)
-        {
-            if (tabloid.C[g].isNegative())
-            {
-                otima = false;
-                negativeColumn = g;
-                break;
-            }
-        }
-        if (!otima)
-        {
-            cout << "ilimitada" << endl;
-        }
-        else
-        {
-            cout << "otima" << endl;
-            cout << tabloid.v << endl;
-        }
-        cout << result << endl;
-        if (otima)
-        {
-            cout << tabloid.certificate << endl;
-        }
-        else
-        {
-            for (int i = 0; i < m; i++)
-            {
-                if (i)
-                    cout << " ";
-                if (tabloid.C[i].isNegative())
-                {
-                    cout << Fraction(1);
-                }
-                else
-                {
-                    Coordinate coord = NULL_COORDINATE;
-                    for (int p = 0; p < base.size(); p++)
-                    {
-                        if (base[p].y == i)
-                        {
-                            coord = base[p];
-                        }
-                    }
-                    if (coord != NULL_COORDINATE)
-                    {
-                        cout << -tabloid.A[coord.x][negativeColumn];
-                    }
-                    else
-                    {
-                        cout << Fraction(0);
-                    }
-                }
-            }
-            cout << endl;
-        }
+        cerr << "Invalid input" << endl;
+        return -1;
     }
+
+    //tabloid body
+    for (int i = 0; i < certificate.size(); i++)
+    {
+        if (!getline(cin, line))
+        {
+            cerr << "Invalid input" << endl;
+            return -1;
+        }
+        vector<string> pieces = explode(line, '|');
+        if (pieces.size() != 3)
+        {
+            cerr << "Invalid input" << endl;
+            return -1;
+        }
+
+        values = explode(pieces[0], ' ', '\t');
+        Vector certificateLine;
+        for (int j = 0; j < values.size(); j++)
+        {
+            certificateLine.push_back(Fraction::fromString(values[j]));
+        }
+        certificateMatrix.push_back(certificateLine);
+
+        values = explode(pieces[1], ' ', '\t');
+        Vector restrictionLine;
+        for (int j = 0; j < values.size(); j++)
+        {
+            restrictionLine.push_back(Fraction::fromString(values[j]));
+        }
+        A.push_back(restrictionLine);
+
+        B.push_back(Fraction::fromString(values[2]));
+    }
+
+    runSimplex(certificate, certificateMatrix, A, B, C, v);
+
     return 0;
 }
