@@ -1,6 +1,6 @@
 #include "Fraction.hh"
 #include <sstream>
-#include "bigint/BigIntegerUtils.hh"
+#include "../bigint/BigIntegerUtils.hh"
 #include "StringUtil.hh"
 
 using namespace std;

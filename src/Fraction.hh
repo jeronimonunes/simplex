@@ -1,7 +1,7 @@
 #ifndef FRACTION_HH
 #define FRACTION_HH
 
-#include "bigint/BigInteger.hh"
+#include "../bigint/BigInteger.hh"
 #include <iostream>
 #include <string>
 
