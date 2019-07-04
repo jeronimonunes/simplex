@@ -1,25 +1,31 @@
 #include "Simplex.hh"
 
-int findIndex(vector<Coordinate> base, int x)
+void runSimplex(Tabloid &firstTabloid, ostream &output)
 {
-    for (int i = 0; i < base.size(); i++)
-    {
-        if (base[i].x == x)
-            return i;
-    }
-    return -1; //potential for seg fault
-}
+    int auxiliarSteps = 0;
 
-void runSimplex(Tabloid& firstTabloid)
-{
     firstTabloid.fixNegativeB();
+    output << "First Tabloid" << endl
+           << firstTabloid << endl;
+
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
-    vector<Coordinate> auxiliarBase = auxiliar.findBase();
+
+    cout << "Auxiliar: " << auxiliarSteps++ << endl;
+    Base auxiliarBase = auxiliar.findBase();
+    cout << "Base: " << auxiliarBase << endl;
+    cout << auxiliar << endl;
+
+    cout << "Auxiliar: " << auxiliarSteps++ << endl;
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
+    cout << "Base: " << auxiliarBase << endl;
     Coordinate enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
+    cout << "Enter: (" << enter << ")" << endl;
+    cout << auxiliar << endl;
+
     while (enter != NULL_COORDINATE)
     {
-        int leaveIdx = findIndex(auxiliarBase, enter.x);
+        cout << "BUUUUG" << endl; //TODO print steps
+        int leaveIdx = auxiliarBase.findIndexByX(enter.x);
         auxiliarBase[leaveIdx] = enter;
         auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
         enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
@@ -31,13 +37,21 @@ void runSimplex(Tabloid& firstTabloid)
     }
     else
     {
-        vector<Coordinate> base;
+        Base base;
+        int steps = 0;
         Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
+        cout << "Step: " << steps++ << endl;
+        cout << "Base: " << base << endl;
+        cout << tabloid << endl;
         tabloid = tabloid.makeBaseUsable(base);
         enter = tabloid.getCoordinateToEnterBase(base);
+        cout << "Step: " << steps++ << endl;
+        cout << "Base: " << base << endl;
+        cout << "Enter: " << enter << endl;
+        cout << tabloid << endl;
         while (enter != NULL_COORDINATE)
         {
-            int leaveIdx = findIndex(base, enter.x);
+            int leaveIdx = base.findIndexByX(enter.x);
             base[leaveIdx] = enter;
             tabloid = tabloid.makeBaseUsable(base);
             enter = tabloid.getCoordinateToEnterBase(base);

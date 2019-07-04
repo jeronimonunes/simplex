@@ -19,9 +19,6 @@ public:
     Vector operator -() const;
 };
 
-/**
- * outputs this vector as a decimal numbers of precision 7 separated by spaces
- */
 std::ostream &operator<<(std::ostream &os, const Vector &x);
 
 #endif

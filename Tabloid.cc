@@ -29,7 +29,7 @@ void Tabloid::fixNegativeB()
     }
 }
 
-Tabloid Tabloid::makeAuxiliarSimplex()
+Tabloid Tabloid::makeAuxiliarSimplex() const
 {
     Matrix A = this->A.copy();
     for (int i = 0; i < this->A.size(); i++)
@@ -43,9 +43,9 @@ Tabloid Tabloid::makeAuxiliarSimplex()
     return Tabloid(this->certificate, this->certificateMatrix, A, this->B, C, 0);
 }
 
-std::vector<Coordinate> Tabloid::findBase()
+Base Tabloid::findBase() const
 {
-    std::vector<Coordinate> result;
+    Base result;
     for (int i = 0; i < this->A.size(); i++)
     {
         result.push_back(this->findBaseColumn(i));
@@ -53,7 +53,7 @@ std::vector<Coordinate> Tabloid::findBase()
     return result;
 }
 
-Coordinate Tabloid::findBaseColumn(int idx)
+Coordinate Tabloid::findBaseColumn(int idx) const
 {
     for (int j = 0; j < this->C.size(); j++)
     {
@@ -77,7 +77,7 @@ Coordinate Tabloid::findBaseColumn(int idx)
     return NULL_COORDINATE;
 }
 
-Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
+Tabloid Tabloid::makeBaseUsable(const Base& base) const
 {
     Vector certificate = this->certificate.copy();
     Matrix certificateMatrix = this->certificateMatrix.copy();
@@ -141,21 +141,11 @@ Tabloid Tabloid::makeBaseUsable(std::vector<Coordinate> base)
     return Tabloid(certificate, certificateMatrix, A, B, C, v);
 }
 
-bool find(std::vector<Coordinate> base, int j)
-{
-    for (int i = 0; i < base.size(); i++)
-    {
-        if (base[i].y == j)
-            return true;
-    }
-    return false;
-}
-
-Coordinate Tabloid::getCoordinateToEnterBase(std::vector<Coordinate> base)
+Coordinate Tabloid::getCoordinateToEnterBase(const Base &base) const
 {
     for (int j = 0; j < this->C.size(); j++)
     {
-        if (!find(base, j) && this->C[j].isNegative())
+        if (!base.containsY(j) && this->C[j].isNegative())
         {
             int oldIndex = -1;
             Fraction oldValue;
@@ -180,7 +170,7 @@ Coordinate Tabloid::getCoordinateToEnterBase(std::vector<Coordinate> base)
     return NULL_COORDINATE;
 }
 
-Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, std::vector<Coordinate> auxiliarBase, std::vector<Coordinate> &output)
+Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, const Base& auxiliarBase, Base &output) const
 {
     Matrix A;
     for (int i = 0; i < t.A.size(); i++)
@@ -222,4 +212,15 @@ Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, std::vector<Coordinate> auxili
         }
     }
     return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0);
+}
+
+ostream &operator<<(ostream &os, const Tabloid &x)
+{
+    os << x.certificate << " | " << x.C << " | " << x.v << endl;
+    os << endl;
+    for (int i = 0; i < x.B.size(); i++)
+    {
+        os << x.certificateMatrix[i] << " | " << x.A[i] << " | " << x.B[i] << endl;
+    }
+    return os;
 }

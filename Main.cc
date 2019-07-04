@@ -8,7 +8,7 @@ int main()
     //Processing input
     Tabloid tabloid = readString(cin);
 
-    runSimplex(tabloid);
+    runSimplex(tabloid, cout);
 
     return 0;
 }

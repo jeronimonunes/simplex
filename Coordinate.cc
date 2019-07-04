@@ -12,3 +12,8 @@ bool Coordinate::operator!=(Coordinate &other)
 {
     return this->x != other.x && this->y != other.y;
 }
+
+std::ostream &operator<<(std::ostream &os, const Coordinate &v)
+{
+    return os << v.x << "," << v.y;
+}

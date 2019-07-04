@@ -1,6 +1,10 @@
 #ifndef COORDINATE_HH
 #define COORDINATE_HH
 
+#include <iostream>
+
+using namespace std;
+
 class Coordinate
 {
 public:
@@ -9,6 +13,8 @@ public:
     Coordinate(int x, int y);
     bool operator!=(Coordinate &other);
 };
+
+std::ostream &operator<<(std::ostream &os, const Coordinate &x);
 
 extern Coordinate NULL_COORDINATE;
 

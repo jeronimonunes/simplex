@@ -55,9 +55,6 @@ public:
     Fraction invert() const;
 };
 
-/**
- * outputs this fraction as a decimal number of precision 7
- */
 std::ostream &operator<<(std::ostream &os, const Fraction &x);
 
 #endif

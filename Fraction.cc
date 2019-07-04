@@ -6,7 +6,7 @@
 using namespace std;
 
 Fraction Fraction::fromString(string& s) {
-    vector<string> parts = explode(s, '/');
+    vector<string> parts = explode(s, {'/'});
     if(parts.size() == 1) {
         return stringToBigInteger(parts[0]);
     } else {

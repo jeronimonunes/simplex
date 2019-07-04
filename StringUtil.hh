@@ -6,6 +6,6 @@
 
 using namespace std;
 
-const vector<string> explode(const string& s, const char& c, const char c2 = '\0');
+const vector<string> explode(const string &s, std::initializer_list<char> list);
 
 #endif
