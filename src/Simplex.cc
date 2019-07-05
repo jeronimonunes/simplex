@@ -1,55 +1,71 @@
 #include "Simplex.hh"
 
-void runSimplex(Tabloid &firstTabloid, ostream &output)
+void runSimplex(Tabloid &firstTabloid, ostream *stepsOutput, ostream &resultOutput)
 {
     int auxiliarSteps = 0;
 
     firstTabloid.fixNegativeB();
-    output << "First Tabloid" << endl
-           << firstTabloid << endl;
+    if (stepsOutput)
+    {
+        *stepsOutput << "First Tabloid" << endl
+               << firstTabloid << endl;
+    }
 
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
 
-    cout << "Auxiliar: " << auxiliarSteps++ << endl;
     Base auxiliarBase = auxiliar.findBase();
-    cout << "Base: " << auxiliarBase << endl;
-    cout << auxiliar << endl;
+    if(stepsOutput) {
+        *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
+        *stepsOutput << "Base: " << auxiliarBase << endl;
+        *stepsOutput << auxiliar << endl;
+    }
 
-    cout << "Auxiliar: " << auxiliarSteps++ << endl;
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
-    cout << "Base: " << auxiliarBase << endl;
     Coordinate enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
-    cout << "Enter: (" << enter << ")" << endl;
-    cout << auxiliar << endl;
+    if(stepsOutput) {
+        *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
+        *stepsOutput << "Base: " << auxiliarBase << endl;
+        *stepsOutput << "Enter: (" << enter << ")" << endl;
+        *stepsOutput << auxiliar << endl;
+    }
 
-    while (enter != NULL_COORDINATE)
+    while (!enter.isNull())
     {
-        cout << "BUUUUG" << endl; //TODO print steps
         int leaveIdx = auxiliarBase.findIndexByX(enter.x);
         auxiliarBase[leaveIdx] = enter;
         auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
         enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
+        if(stepsOutput) {
+            *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
+            *stepsOutput << "Base: " << auxiliarBase << endl;
+            *stepsOutput << "Enter: (" << enter << ")" << endl;
+            *stepsOutput << auxiliar << endl;
+        }
     }
     if (auxiliar.v.isNegative())
     {
-        cout << "inviavel" << endl;
-        cout << auxiliar.certificate << endl;
+        resultOutput << "inviavel" << endl;
+        resultOutput << auxiliar.certificate << endl;
     }
     else
     {
         Base base;
         int steps = 0;
         Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
-        cout << "Step: " << steps++ << endl;
-        cout << "Base: " << base << endl;
-        cout << tabloid << endl;
+        if(stepsOutput) {
+            *stepsOutput << "Step: " << steps++ << endl;
+            *stepsOutput << "Base: " << base << endl;
+            *stepsOutput << tabloid << endl;
+        }
         tabloid = tabloid.makeBaseUsable(base);
         enter = tabloid.getCoordinateToEnterBase(base);
-        cout << "Step: " << steps++ << endl;
-        cout << "Base: " << base << endl;
-        cout << "Enter: " << enter << endl;
-        cout << tabloid << endl;
-        while (enter != NULL_COORDINATE)
+        if(stepsOutput) {
+            *stepsOutput << "Step: " << steps++ << endl;
+            *stepsOutput << "Base: " << base << endl;
+            *stepsOutput << "Enter: " << enter << endl;
+            *stepsOutput << tabloid << endl;
+        }
+        while (!enter.isNull())
         {
             int leaveIdx = base.findIndexByX(enter.x);
             base[leaveIdx] = enter;
@@ -94,27 +110,27 @@ void runSimplex(Tabloid &firstTabloid, ostream &output)
         }
         if (!otima)
         {
-            cout << "ilimitada" << endl;
+            resultOutput << "ilimitada" << endl;
         }
         else
         {
-            cout << "otima" << endl;
-            cout << tabloid.v << endl;
+            resultOutput << "otima" << endl;
+            resultOutput << tabloid.v << endl;
         }
-        cout << result << endl;
+        resultOutput << result << endl;
         if (otima)
         {
-            cout << tabloid.certificate << endl;
+            resultOutput << tabloid.certificate << endl;
         }
         else
         {
             for (int i = 0; i < tabloid.C.size(); i++)
             {
                 if (i)
-                    cout << " ";
+                    resultOutput << " ";
                 if (tabloid.C[i].isNegative())
                 {
-                    cout << Fraction(1);
+                    resultOutput << Fraction(1);
                 }
                 else
                 {
@@ -126,17 +142,17 @@ void runSimplex(Tabloid &firstTabloid, ostream &output)
                             coord = base[p];
                         }
                     }
-                    if (coord != NULL_COORDINATE)
+                    if (!coord.isNull())
                     {
-                        cout << -tabloid.A[coord.x][negativeColumn];
+                        resultOutput << -tabloid.A[coord.x][negativeColumn];
                     }
                     else
                     {
-                        cout << Fraction(0);
+                        resultOutput << Fraction(0);
                     }
                 }
             }
-            cout << endl;
+            resultOutput << endl;
         }
     }
 }

@@ -11,7 +11,7 @@ public:
     int x;
     int y;
     Coordinate(int x, int y);
-    bool operator!=(Coordinate &other);
+    bool isNull() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Coordinate &x);

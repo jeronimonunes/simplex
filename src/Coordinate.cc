@@ -8,9 +8,8 @@ Coordinate::Coordinate(int x, int y)
     this->y = y;
 }
 
-bool Coordinate::operator!=(Coordinate &other)
-{
-    return this->x != other.x && this->y != other.y;
+bool Coordinate::isNull() const {
+    return this->x == -1 && this->y == -1;
 }
 
 std::ostream &operator<<(std::ostream &os, const Coordinate &v)
