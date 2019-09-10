@@ -1,5 +1,2 @@
-CC=g++ -g -Ofast
-
-
 all:
-	$(CC) Main.cc -o a.exe
+	$(CXX) $(CXXFLAGS) Main.cc -o a.exe

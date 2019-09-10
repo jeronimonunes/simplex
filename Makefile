@@ -1,7 +1,11 @@
-all:
-	cd bigint && $(MAKE)
-	cd src && $(MAKE)
+all: bigint/bigint.o src/a.exe
+
+bigint/bigint.o:
+	$(MAKE) -C bigint $(MAKECMDGOALS)
+
+src/a.exe:	
+	$(MAKE) -C src $(MAKECMDGOALS)
 
 clean:
-	cd bigint && $(MAKE) clean
-	cd src && $(MAKE) clean
+	$(MAKE) -C bigint $(MAKECMDGOALS)
+	$(MAKE) -C src $(MAKECMDGOALS)

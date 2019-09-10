@@ -2,6 +2,20 @@
 #define SIMPLEX_HH
 #include "Tabloid.hh"
 
-void runSimplex(Tabloid &tabloid, ostream* steps, ostream &result);
+enum class ResultType {
+    UNFEASIBLE,
+    ILIMITED,
+    LIMITED
+};
+
+class Result {
+    public:
+    ResultType type;
+    Vector certificate;
+    Fraction value;
+    Vector solution;
+};
+
+Result runSimplex(Tabloid &tabloid);
 
 #endif

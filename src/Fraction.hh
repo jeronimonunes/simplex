@@ -27,6 +27,8 @@ public:
     Fraction(long i);
     Fraction(BigInteger numerator, BigInteger denominator = 1);
 
+    double toDouble() const;
+
     bool isOne() const;
     bool isZero() const;
     bool isNegative() const;

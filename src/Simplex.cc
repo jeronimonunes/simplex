@@ -1,33 +1,15 @@
 #include "Simplex.hh"
 
-void runSimplex(Tabloid &firstTabloid, ostream *stepsOutput, ostream &resultOutput)
+Result runSimplex(Tabloid &firstTabloid)
 {
-    int auxiliarSteps = 0;
-
     firstTabloid.fixNegativeB();
-    if (stepsOutput)
-    {
-        *stepsOutput << "First Tabloid" << endl
-               << firstTabloid << endl;
-    }
 
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
 
     Base auxiliarBase = auxiliar.findBase();
-    if(stepsOutput) {
-        *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
-        *stepsOutput << "Base: " << auxiliarBase << endl;
-        *stepsOutput << auxiliar << endl;
-    }
 
     auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
     Coordinate enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
-    if(stepsOutput) {
-        *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
-        *stepsOutput << "Base: " << auxiliarBase << endl;
-        *stepsOutput << "Enter: (" << enter << ")" << endl;
-        *stepsOutput << auxiliar << endl;
-    }
 
     while (!enter.isNull())
     {
@@ -35,36 +17,23 @@ void runSimplex(Tabloid &firstTabloid, ostream *stepsOutput, ostream &resultOutp
         auxiliarBase[leaveIdx] = enter;
         auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
         enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
-        if(stepsOutput) {
-            *stepsOutput << "Auxiliar: " << auxiliarSteps++ << endl;
-            *stepsOutput << "Base: " << auxiliarBase << endl;
-            *stepsOutput << "Enter: (" << enter << ")" << endl;
-            *stepsOutput << auxiliar << endl;
-        }
     }
+
     if (auxiliar.v.isNegative())
     {
-        resultOutput << "inviavel" << endl;
-        resultOutput << auxiliar.certificate << endl;
+        return {
+            ResultType::UNFEASIBLE,
+            auxiliar.certificate,
+            0,
+            Vector(0)};
     }
     else
     {
         Base base;
         int steps = 0;
         Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
-        if(stepsOutput) {
-            *stepsOutput << "Step: " << steps++ << endl;
-            *stepsOutput << "Base: " << base << endl;
-            *stepsOutput << tabloid << endl;
-        }
         tabloid = tabloid.makeBaseUsable(base);
         enter = tabloid.getCoordinateToEnterBase(base);
-        if(stepsOutput) {
-            *stepsOutput << "Step: " << steps++ << endl;
-            *stepsOutput << "Base: " << base << endl;
-            *stepsOutput << "Enter: " << enter << endl;
-            *stepsOutput << tabloid << endl;
-        }
         while (!enter.isNull())
         {
             int leaveIdx = base.findIndexByX(enter.x);
@@ -108,29 +77,22 @@ void runSimplex(Tabloid &firstTabloid, ostream *stepsOutput, ostream &resultOutp
                 break;
             }
         }
-        if (!otima)
-        {
-            resultOutput << "ilimitada" << endl;
-        }
-        else
-        {
-            resultOutput << "otima" << endl;
-            resultOutput << tabloid.v << endl;
-        }
-        resultOutput << result << endl;
         if (otima)
         {
-            resultOutput << tabloid.certificate << endl;
+            return {
+                ResultType::LIMITED,
+                tabloid.certificate,
+                tabloid.v,
+                result};
         }
         else
         {
+            Vector cert(tabloid.C.size());
             for (int i = 0; i < tabloid.C.size(); i++)
             {
-                if (i)
-                    resultOutput << " ";
                 if (tabloid.C[i].isNegative())
                 {
-                    resultOutput << Fraction(1);
+                    cert[i] = 1;
                 }
                 else
                 {
@@ -144,15 +106,19 @@ void runSimplex(Tabloid &firstTabloid, ostream *stepsOutput, ostream &resultOutp
                     }
                     if (!coord.isNull())
                     {
-                        resultOutput << -tabloid.A[coord.x][negativeColumn];
+                        cert[i] = -tabloid.A[coord.x][negativeColumn];
                     }
                     else
                     {
-                        resultOutput << Fraction(0);
+                        cert[i] = 0;
                     }
                 }
             }
-            resultOutput << endl;
+            return {
+                ResultType::ILIMITED,
+                cert,
+                0,
+                result};
         }
     }
 }

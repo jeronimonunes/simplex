@@ -2,14 +2,31 @@
 #include <sstream>
 #include "../bigint/BigIntegerUtils.hh"
 #include "StringUtil.hh"
+#include <iomanip>
 
 using namespace std;
 
-Fraction Fraction::fromString(string& s) {
+BigInteger gcd(const BigInteger &a, const BigInteger &b)
+{
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
+}
+
+double bigIntegerToDouble(const BigInteger &v)
+{
+    return stod(bigIntegerToString(v));
+}
+
+Fraction Fraction::fromString(string &s)
+{
     vector<string> parts = explode(s, {'/'});
-    if(parts.size() == 1) {
+    if (parts.size() == 1)
+    {
         return stringToBigInteger(parts[0]);
-    } else {
+    }
+    else
+    {
         BigInteger numerator = stringToBigInteger(parts[0]);
         BigInteger denominator = stringToBigInteger(parts[1]);
         return Fraction(numerator, denominator);
@@ -23,20 +40,16 @@ Fraction::Fraction(BigInteger numerator, BigInteger denominator)
         this->numerator = 0;
         this->denominator = 1;
     }
-    else if (numerator % denominator == 0)
-    {
-        this->numerator = numerator / denominator;
-        this->denominator = 1;
-    }
-    else if (denominator < 0)
-    {
-        this->numerator = numerator * -1;
-        this->denominator = denominator * -1;
-    }
     else
     {
-        this->numerator = numerator;
-        this->denominator = denominator;
+        if (denominator < 0)
+        {
+            numerator *= -1;
+            denominator *= -1;
+        }
+        BigInteger gcdv = gcd(numerator, denominator);
+        this->numerator = numerator / gcdv;
+        this->denominator = denominator / gcdv;
     }
 }
 
@@ -50,6 +63,13 @@ Fraction::Fraction(long numerator)
 {
     this->numerator = numerator;
     this->denominator = 1;
+}
+
+double Fraction::toDouble() const
+{
+    double n = bigIntegerToDouble(this->numerator);
+    double d = bigIntegerToDouble(this->denominator);
+    return n / d;
 }
 
 bool Fraction::isZero() const
@@ -178,21 +198,8 @@ Fraction Fraction::invert() const
         return Fraction(this->denominator, this->numerator);
 }
 
-double toDouble(const BigInteger &v)
-{
-    stringstream ss;
-    ss << v;
-    double d;
-    ss >> d;
-    return d;
-}
-
 ostream &operator<<(ostream &os, const Fraction &x)
 {
-    if(x.denominator == 1) {
-        os << x.numerator;
-    } else {
-        os << x.numerator << "/" << x.denominator;
-    }
+    os << std::setprecision(7) << x.toDouble();
     return os;
 }
