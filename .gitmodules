@@ -1,3 +1,3 @@
 [submodule "bigint"]
 	path = bigint
-	url = ../bigint.git/
+	url = https://github.com/jeronimonunes/bigint.git
