@@ -5,8 +5,6 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
 class Fraction
 {
 public:
@@ -20,12 +18,18 @@ public:
         equal = BigInteger::equal,
         greater = BigInteger::greater;
     
-    static Fraction fromString(string&);
+    static Fraction fromString(std::string&);
 
 public:
     Fraction();
     Fraction(long i);
     Fraction(BigInteger numerator, BigInteger denominator = 1);
+
+    std::string getNumerator() const;
+    std::string getDenominator() const;
+
+    void setNumerator(const std::string& numerator);
+    void setDenominator(const std::string& denominator);
 
     double toDouble() const;
 

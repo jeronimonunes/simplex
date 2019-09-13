@@ -65,6 +65,26 @@ Fraction::Fraction(long numerator)
     this->denominator = 1;
 }
 
+std::string Fraction::getNumerator() const
+{
+    return bigIntegerToString(this->numerator);
+}
+
+std::string Fraction::getDenominator() const
+{
+    return bigIntegerToString(this->denominator);
+}
+
+void Fraction::setNumerator(const std::string &numerator)
+{
+    this->numerator = stringToBigInteger(numerator);
+}
+
+void Fraction::setDenominator(const std::string &denominator)
+{
+    this->denominator = stringToBigInteger(denominator);
+}
+
 double Fraction::toDouble() const
 {
     double n = bigIntegerToDouble(this->numerator);
