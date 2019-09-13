@@ -22,7 +22,7 @@ public:
 
 public:
     Tabloid(Vector certificate, Matrix certificateMatrix, Matrix A, Vector B, Vector C, Fraction v);
-    Tabloid(Matrix A, Vector B, Vector C, Fraction v);
+    Tabloid(Matrix A, Vector B, Vector C, Fraction v = 0);
     void fixNegativeB();
     Tabloid makeAuxiliarSimplex() const;
     Base findBase() const;
