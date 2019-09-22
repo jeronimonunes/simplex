@@ -30,7 +30,7 @@ $(library-objects): $(library-headers)
 
 # Delete all generated files we know about.
 clean :
-	$(RM) $(clean_command) $(library-objects) $(testsuite-cleanfiles) $(program-objects)
+	$(RM) $(library-objects) $(testsuite-cleanfiles) $(program-objects)
 
 # Come back and define default target.
 all : library

@@ -1,5 +1,13 @@
 all: program test
 
+ifdef OS
+   RM = del /Q
+else
+   ifeq ($(shell uname), Linux)
+      RM = rm -f
+   endif
+endif
+
 bigint:
 	$(MAKE) -C bigint library
 
@@ -20,4 +28,4 @@ tp: bigint simplex
 clean:
 	$(MAKE) -C bigint clean
 	$(MAKE) -C src clean
-  rm a.exe
+	$(RM) a.exe
