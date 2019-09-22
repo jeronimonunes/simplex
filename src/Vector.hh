@@ -10,7 +10,6 @@ public:
     explicit Vector();
     explicit Vector(unsigned int n);
     explicit Vector(const Fraction frac, int n);
-    Vector copy() const;
     Vector crop(unsigned int n) const;
     Vector concat(const Vector &other) const;
 

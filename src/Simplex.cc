@@ -2,7 +2,7 @@
 
 Result runSimplex(Tabloid &firstTabloid)
 {
-    firstTabloid.fixNegativeB();
+    firstTabloid = firstTabloid.fixNegativeB();
 
     Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
 

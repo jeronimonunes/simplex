@@ -25,17 +25,6 @@ Matrix::Matrix(unsigned int n)
     }
 }
 
-Matrix Matrix::copy() const
-{
-    Matrix result;
-    while (result.size() < this->size())
-    {
-        Vector line = this->at(result.size()).copy();
-        result.push_back(line);
-    }
-    return result;
-}
-
 Vector operator*(Vector &a, Matrix &b)
 {
     Vector result;

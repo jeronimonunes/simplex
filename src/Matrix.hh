@@ -11,7 +11,6 @@ public:
     Matrix();
     //creates an identity matrix of size n * n
     Matrix(unsigned int n);
-    Matrix copy() const;
 };
 
 //calculates (a transposed) * b

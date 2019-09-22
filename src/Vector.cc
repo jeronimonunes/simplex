@@ -17,16 +17,6 @@ Vector::Vector(unsigned int n) : Vector(0, n)
 {
 }
 
-Vector Vector::copy() const
-{
-    Vector result;
-    while (result.size() < this->size())
-    {
-        result.push_back(this->at(result.size()));
-    }
-    return result;
-}
-
 Vector Vector::crop(unsigned int n) const
 {
     Vector result;
