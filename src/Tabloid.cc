@@ -8,7 +8,8 @@ Tabloid::Tabloid(
     const Matrix &A,
     const Vector &B,
     const Vector &C,
-    const Fraction &v)
+    const Fraction &v,
+    const Base &base)
 {
   this->certificate = certificate;
   this->certificateMatrix = certificateMatrix;
@@ -16,13 +17,15 @@ Tabloid::Tabloid(
   this->B = B;
   this->C = C;
   this->v = v;
+  this->base = base;
 }
 
 Tabloid::Tabloid(
     const Matrix &A,
     const Vector &B,
     const Vector &C,
-    const Fraction &v) : Tabloid(Vector(B.size()), Matrix(B.size()), A, B, C, v)
+    const Fraction &v,
+    const Base &base) : Tabloid(Vector(B.size()), Matrix(B.size()), A, B, C, v, base)
 {
 }
 
@@ -40,58 +43,29 @@ Tabloid Tabloid::fixNegativeB() const
       B[i] = -B[i];
     }
   }
-  return Tabloid(certificate, certificateMatrix, A, B, C, v);
+  return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
 }
 
 Tabloid Tabloid::makeAuxiliarSimplex() const
 {
   Matrix A = this->A;
+  Base base;
   for (unsigned int i = 0; i < this->A.size(); i++)
   {
     for (unsigned int j = 0; j < this->A.size(); j++)
     {
+      if (i == j)
+      {
+        base.push_back(Coordinate((int)i, (int)j + this->C.size()));
+      }
       A[i].push_back(i == j ? 1 : 0);
     }
   }
   Vector C = Vector(this->C.size()).concat(Vector(1, A.size()));
-  return Tabloid(this->certificate, this->certificateMatrix, A, this->B, C, 0);
+  return Tabloid(certificate, certificateMatrix, A, B, C, 0, base);
 }
 
-Base Tabloid::findBase() const
-{
-  Base result;
-  for (unsigned int i = 0; i < this->A.size(); i++)
-  {
-    result.push_back(this->findBaseColumn(i));
-  }
-  return result;
-}
-
-Coordinate Tabloid::findBaseColumn(unsigned int idx) const
-{
-  for (unsigned int j = 0; j < this->C.size(); j++)
-  {
-    bool ok = true;
-    for (unsigned int i = 0; i < this->A.size(); i++)
-    {
-      if (i == idx)
-      {
-        ok = this->A[i][j].isOne();
-      }
-      else
-      {
-        ok = this->A[i][j].isZero();
-      }
-      if (!ok)
-        break;
-    }
-    if (ok)
-      return Coordinate(idx, j);
-  }
-  return NULL_COORDINATE;
-}
-
-Tabloid Tabloid::makeBaseUsable(const Base &base) const
+Tabloid Tabloid::makeBaseUsable() const
 {
   Vector certificate = this->certificate;
   Matrix certificateMatrix = this->certificateMatrix;
@@ -152,10 +126,10 @@ Tabloid Tabloid::makeBaseUsable(const Base &base) const
     }
   }
 
-  return Tabloid(certificate, certificateMatrix, A, B, C, v);
+  return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
 }
 
-Coordinate Tabloid::getCoordinateToEnterBase(const Base &base) const
+Coordinate Tabloid::getCoordinateToEnterBase() const
 {
   for (unsigned int j = 0; j < this->C.size(); j++)
   {
@@ -184,8 +158,9 @@ Coordinate Tabloid::getCoordinateToEnterBase(const Base &base) const
   return NULL_COORDINATE;
 }
 
-Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t, const Base &auxiliarBase, Base &output) const
+Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
 {
+  Base base;
   Matrix A;
   for (unsigned int i = 0; i < t.A.size(); i++)
   {
@@ -196,9 +171,9 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t, const Base &auxiliarBas
     }
     A.push_back(line);
   }
-  for (unsigned int i = 0; i < auxiliarBase.size(); i++)
+  for (unsigned int i = 0; i < t.base.size(); i++)
   {
-    Coordinate coord = auxiliarBase[i];
+    Coordinate coord = t.base[i];
     if (coord.y >= (int)this->C.size())
     {
       int y = -1;
@@ -212,20 +187,20 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t, const Base &auxiliarBas
       }
       if (y >= 0)
       {
-        output.push_back(Coordinate(coord.x, y));
+        base.push_back(Coordinate(coord.x, y));
       }
       else
       {
         //potential for seg fault
-        output.push_back(NULL_COORDINATE);
+        base.push_back(NULL_COORDINATE);
       }
     }
     else
     {
-      output.push_back(coord);
+      base.push_back(coord);
     }
   }
-  return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0);
+  return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0, base);
 }
 
 ostream &operator<<(ostream &os, const Tabloid &x)
@@ -237,4 +212,22 @@ ostream &operator<<(ostream &os, const Tabloid &x)
     os << x.certificateMatrix[i] << " | " << x.A[i] << " | " << x.B[i] << endl;
   }
   return os;
+}
+
+Tabloid Tabloid::runSimplexStep(bool &stepDone) const
+{
+  Coordinate enter = getCoordinateToEnterBase();
+  if (!enter.isNull())
+  {
+    stepDone = true;
+    Base base = this->base;
+    int leaveIdx = base.findIndexByX(enter.x);
+    base[leaveIdx] = enter;
+    return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
+  }
+  else
+  {
+    stepDone = false;
+    return *this;
+  }
 }

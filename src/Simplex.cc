@@ -2,122 +2,114 @@
 
 Result runSimplex(Tabloid &firstTabloid)
 {
-    firstTabloid = firstTabloid.fixNegativeB();
+  firstTabloid = firstTabloid.fixNegativeB();
 
-    Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
+  Tabloid auxiliar = firstTabloid.makeAuxiliarSimplex();
 
-    Base auxiliarBase = auxiliar.findBase();
+  bool run = true;
 
-    auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
-    Coordinate enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
+  while (run)
+  {
+    auxiliar = auxiliar.makeBaseUsable();
+    auxiliar = auxiliar.runSimplexStep(run);
+  }
 
-    while (!enter.isNull())
+  if (auxiliar.v.isNegative())
+  {
+    return {
+        ResultType::UNFEASIBLE,
+        auxiliar.certificate,
+        0,
+        Vector(0)};
+  }
+  else
+  {
+    Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar);
+
+    bool run = true;
+    while (run)
     {
-        int leaveIdx = auxiliarBase.findIndexByX(enter.x);
-        auxiliarBase[leaveIdx] = enter;
-        auxiliar = auxiliar.makeBaseUsable(auxiliarBase);
-        enter = auxiliar.getCoordinateToEnterBase(auxiliarBase);
+      tabloid = tabloid.makeBaseUsable();
+      tabloid = tabloid.runSimplexStep(run);
     }
-
-    if (auxiliar.v.isNegative())
+    Vector result;
+    for (unsigned int y = 0; y < tabloid.C.size(); y++)
     {
-        return {
-            ResultType::UNFEASIBLE,
-            auxiliar.certificate,
-            0,
-            Vector(0)};
+      Fraction v = tabloid.C[y];
+      if (v.isZero())
+      {
+        bool found = false;
+        for (unsigned int p = 0; p < tabloid.base.size(); p++)
+        {
+          if (tabloid.base[p].y == (int)y)
+          {
+            found = true;
+            result.push_back(tabloid.B[tabloid.base[p].x]);
+          }
+        }
+        if (!found)
+        {
+          result.push_back(0);
+        }
+      }
+      else
+      {
+        result.push_back(0);
+      }
+    }
+    bool otima = true;
+    int negativeColumn = -1;
+    for (unsigned int g = 0; g < tabloid.C.size(); g++)
+    {
+      if (tabloid.C[g].isNegative())
+      {
+        otima = false;
+        negativeColumn = g;
+        break;
+      }
+    }
+    if (otima)
+    {
+      return {
+          ResultType::LIMITED,
+          tabloid.certificate,
+          tabloid.v,
+          result};
     }
     else
     {
-        Base base;
-        Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
-        tabloid = tabloid.makeBaseUsable(base);
-        enter = tabloid.getCoordinateToEnterBase(base);
-        while (!enter.isNull())
+      Vector cert(tabloid.C.size());
+      for (unsigned int i = 0; i < tabloid.C.size(); i++)
+      {
+        if (tabloid.C[i].isNegative())
         {
-            int leaveIdx = base.findIndexByX(enter.x);
-            base[leaveIdx] = enter;
-            tabloid = tabloid.makeBaseUsable(base);
-            enter = tabloid.getCoordinateToEnterBase(base);
-        }
-        Vector result;
-        for (unsigned int y = 0; y < tabloid.C.size(); y++)
-        {
-            Fraction v = tabloid.C[y];
-            if (v.isZero())
-            {
-                bool found = false;
-                for (unsigned int p = 0; p < base.size(); p++)
-                {
-                    if (base[p].y == (int)y)
-                    {
-                        found = true;
-                        result.push_back(tabloid.B[base[p].x]);
-                    }
-                }
-                if (!found)
-                {
-                    result.push_back(0);
-                }
-            }
-            else
-            {
-                result.push_back(0);
-            }
-        }
-        bool otima = true;
-        int negativeColumn = -1;
-        for (unsigned int g = 0; g < tabloid.C.size(); g++)
-        {
-            if (tabloid.C[g].isNegative())
-            {
-                otima = false;
-                negativeColumn = g;
-                break;
-            }
-        }
-        if (otima)
-        {
-            return {
-                ResultType::LIMITED,
-                tabloid.certificate,
-                tabloid.v,
-                result};
+          cert[i] = 1;
         }
         else
         {
-            Vector cert(tabloid.C.size());
-            for (unsigned int i = 0; i < tabloid.C.size(); i++)
+          Coordinate coord = NULL_COORDINATE;
+          for (unsigned int p = 0; p < tabloid.base.size(); p++)
+          {
+            if (tabloid.base[p].y == (int)i)
             {
-                if (tabloid.C[i].isNegative())
-                {
-                    cert[i] = 1;
-                }
-                else
-                {
-                    Coordinate coord = NULL_COORDINATE;
-                    for (unsigned int p = 0; p < base.size(); p++)
-                    {
-                        if (base[p].y == (int)i)
-                        {
-                            coord = base[p];
-                        }
-                    }
-                    if (!coord.isNull())
-                    {
-                        cert[i] = -tabloid.A[coord.x][negativeColumn];
-                    }
-                    else
-                    {
-                        cert[i] = 0;
-                    }
-                }
+              coord = tabloid.base[p];
             }
-            return {
-                ResultType::ILIMITED,
-                cert,
-                0,
-                result};
+          }
+          if (!coord.isNull())
+          {
+            cert[i] = -tabloid.A[coord.x][negativeColumn];
+          }
+          else
+          {
+            cert[i] = 0;
+          }
         }
+      }
+      return {
+          ResultType::ILIMITED,
+          cert,
+          0,
+          result};
     }
+  }
 }

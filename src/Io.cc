@@ -91,6 +91,6 @@ Tabloid readString(std::istream &istream)
 
         B.push_back(Fraction::fromString(values[0]));
     }
-    Tabloid t = Tabloid(certificate, certificateMatrix, A, B, C, v);
+    Tabloid t = Tabloid(certificate, certificateMatrix, A, B, C, v, Base());
     return t;
 }

@@ -17,8 +17,10 @@ public:
   Vector B;
   Vector C;
   Fraction v;
+  Base base;
 
-  Coordinate findBaseColumn(unsigned int i) const;
+private:
+  Coordinate getCoordinateToEnterBase() const;
 
 public:
   Tabloid(
@@ -27,18 +29,19 @@ public:
       const Matrix &A,
       const Vector &B,
       const Vector &C,
-      const Fraction &v);
+      const Fraction &v,
+      const Base &base);
   Tabloid(
       const Matrix &A,
       const Vector &B,
       const Vector &C,
-      const Fraction &v = 0);
+      const Fraction &v = 0,
+      const Base &base = Base());
   Tabloid fixNegativeB() const;
   Tabloid makeAuxiliarSimplex() const;
-  Base findBase() const;
-  Tabloid makeBaseUsable(const Base &base) const;
-  Coordinate getCoordinateToEnterBase(const Base &base) const;
-  Tabloid continueUsingAuxiliar(const Tabloid &auxiliar, const Base &auxiliarBase, Base &output) const;
+  Tabloid makeBaseUsable() const;
+  Tabloid continueUsingAuxiliar(const Tabloid &auxiliar) const;
+  Tabloid runSimplexStep(bool &stepDone) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Tabloid &x);
