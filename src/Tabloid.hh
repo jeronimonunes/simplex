@@ -18,7 +18,7 @@ public:
     Vector C;
     Fraction v;
 
-    Coordinate findBaseColumn(int i) const;
+    Coordinate findBaseColumn(unsigned int i) const;
 
 public:
     Tabloid(Vector certificate, Matrix certificateMatrix, Matrix A, Vector B, Vector C, Fraction v);

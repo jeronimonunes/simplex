@@ -10,7 +10,7 @@ class Matrix : public std::vector<Vector>
 public:
     Matrix();
     //creates an identity matrix of size n * n
-    Matrix(int n);
+    Matrix(unsigned int n);
     Matrix copy() const;
 };
 

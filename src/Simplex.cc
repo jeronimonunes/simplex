@@ -30,7 +30,6 @@ Result runSimplex(Tabloid &firstTabloid)
     else
     {
         Base base;
-        int steps = 0;
         Tabloid tabloid = firstTabloid.continueUsingAuxiliar(auxiliar, auxiliarBase, base);
         tabloid = tabloid.makeBaseUsable(base);
         enter = tabloid.getCoordinateToEnterBase(base);
@@ -42,15 +41,15 @@ Result runSimplex(Tabloid &firstTabloid)
             enter = tabloid.getCoordinateToEnterBase(base);
         }
         Vector result;
-        for (int y = 0; y < tabloid.C.size(); y++)
+        for (unsigned int y = 0; y < tabloid.C.size(); y++)
         {
             Fraction v = tabloid.C[y];
             if (v.isZero())
             {
                 bool found = false;
-                for (int p = 0; p < base.size(); p++)
+                for (unsigned int p = 0; p < base.size(); p++)
                 {
-                    if (base[p].y == y)
+                    if (base[p].y == (int)y)
                     {
                         found = true;
                         result.push_back(tabloid.B[base[p].x]);
@@ -68,7 +67,7 @@ Result runSimplex(Tabloid &firstTabloid)
         }
         bool otima = true;
         int negativeColumn = -1;
-        for (int g = 0; g < tabloid.C.size(); g++)
+        for (unsigned int g = 0; g < tabloid.C.size(); g++)
         {
             if (tabloid.C[g].isNegative())
             {
@@ -88,7 +87,7 @@ Result runSimplex(Tabloid &firstTabloid)
         else
         {
             Vector cert(tabloid.C.size());
-            for (int i = 0; i < tabloid.C.size(); i++)
+            for (unsigned int i = 0; i < tabloid.C.size(); i++)
             {
                 if (tabloid.C[i].isNegative())
                 {
@@ -97,9 +96,9 @@ Result runSimplex(Tabloid &firstTabloid)
                 else
                 {
                     Coordinate coord = NULL_COORDINATE;
-                    for (int p = 0; p < base.size(); p++)
+                    for (unsigned int p = 0; p < base.size(); p++)
                     {
-                        if (base[p].y == i)
+                        if (base[p].y == (int)i)
                         {
                             coord = base[p];
                         }

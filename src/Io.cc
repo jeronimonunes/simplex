@@ -26,14 +26,14 @@ Tabloid readString(std::istream &istream)
     }
 
     vector<string> values = explode(pieces[0], SPACES);
-    for (int i = 0; i < values.size(); i++)
+    for (unsigned int i = 0; i < values.size(); i++)
     {
         certificate.push_back(Fraction::fromString(values[i]));
     }
 
     values = explode(pieces[1], SPACES);
 
-    for (int i = 0; i < values.size(); i++)
+    for (unsigned int i = 0; i < values.size(); i++)
     {
         C.push_back(Fraction::fromString(values[i]));
     }
@@ -54,7 +54,7 @@ Tabloid readString(std::istream &istream)
     }
 
     //tabloid body
-    for (int i = 0; i < certificate.size(); i++)
+    for (unsigned int i = 0; i < certificate.size(); i++)
     {
         if (!getline(istream, line))
         {
@@ -68,7 +68,7 @@ Tabloid readString(std::istream &istream)
 
         values = explode(pieces[0], SPACES);
         Vector certificateLine;
-        for (int j = 0; j < values.size(); j++)
+        for (unsigned int j = 0; j < values.size(); j++)
         {
             certificateLine.push_back(Fraction::fromString(values[j]));
         }
@@ -76,7 +76,7 @@ Tabloid readString(std::istream &istream)
 
         values = explode(pieces[1], SPACES);
         Vector restrictionLine;
-        for (int j = 0; j < values.size(); j++)
+        for (unsigned int j = 0; j < values.size(); j++)
         {
             restrictionLine.push_back(Fraction::fromString(values[j]));
         }

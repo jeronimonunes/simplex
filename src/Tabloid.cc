@@ -18,7 +18,7 @@ Tabloid::Tabloid(Matrix A, Vector B, Vector C, Fraction v) : Tabloid(Vector(B.si
 
 void Tabloid::fixNegativeB()
 {
-    for (int i = 0; i < this->B.size(); i++)
+    for (unsigned int i = 0; i < this->B.size(); i++)
     {
         if (B[i].isNegative())
         {
@@ -32,9 +32,9 @@ void Tabloid::fixNegativeB()
 Tabloid Tabloid::makeAuxiliarSimplex() const
 {
     Matrix A = this->A.copy();
-    for (int i = 0; i < this->A.size(); i++)
+    for (unsigned int i = 0; i < this->A.size(); i++)
     {
-        for (int j = 0; j < this->A.size(); j++)
+        for (unsigned int j = 0; j < this->A.size(); j++)
         {
             A[i].push_back(i == j ? 1 : 0);
         }
@@ -46,19 +46,19 @@ Tabloid Tabloid::makeAuxiliarSimplex() const
 Base Tabloid::findBase() const
 {
     Base result;
-    for (int i = 0; i < this->A.size(); i++)
+    for (unsigned int i = 0; i < this->A.size(); i++)
     {
         result.push_back(this->findBaseColumn(i));
     }
     return result;
 }
 
-Coordinate Tabloid::findBaseColumn(int idx) const
+Coordinate Tabloid::findBaseColumn(unsigned int idx) const
 {
-    for (int j = 0; j < this->C.size(); j++)
+    for (unsigned int j = 0; j < this->C.size(); j++)
     {
         bool ok = true;
-        for (int i = 0; i < this->A.size(); i++)
+        for (unsigned int i = 0; i < this->A.size(); i++)
         {
             if (i == idx)
             {
@@ -86,7 +86,7 @@ Tabloid Tabloid::makeBaseUsable(const Base& base) const
     Vector B = this->B.copy();
     Fraction v = this->v;
 
-    for (int u = 0; u < base.size(); u++)
+    for (unsigned int u = 0; u < base.size(); u++)
     {
         Coordinate coord = base[u];
         Vector pline = A[coord.x];
@@ -115,9 +115,9 @@ Tabloid Tabloid::makeBaseUsable(const Base& base) const
             certificate = certificate + cpline * fix;
             v = v + B[coord.x] * fix;
         }
-        for (int i = 0; i < A.size(); i++)
+        for (unsigned int i = 0; i < A.size(); i++)
         {
-            if (i != coord.x)
+            if ((int)i != coord.x)
             {
                 Vector aLine = A[i];
                 Vector cLine = certificateMatrix[i];
@@ -143,13 +143,13 @@ Tabloid Tabloid::makeBaseUsable(const Base& base) const
 
 Coordinate Tabloid::getCoordinateToEnterBase(const Base &base) const
 {
-    for (int j = 0; j < this->C.size(); j++)
+    for (unsigned int j = 0; j < this->C.size(); j++)
     {
         if (!base.containsY(j) && this->C[j].isNegative())
         {
             int oldIndex = -1;
             Fraction oldValue;
-            for (int i = 0; i < this->A.size(); i++)
+            for (unsigned int i = 0; i < this->A.size(); i++)
             {
                 if (this->A[i][j].isPositive())
                 {
@@ -173,22 +173,22 @@ Coordinate Tabloid::getCoordinateToEnterBase(const Base &base) const
 Tabloid Tabloid::continueUsingAuxiliar(Tabloid t, const Base& auxiliarBase, Base &output) const
 {
     Matrix A;
-    for (int i = 0; i < t.A.size(); i++)
+    for (unsigned int i = 0; i < t.A.size(); i++)
     {
         Vector line;
-        for (int j = 0; j < this->C.size(); j++)
+        for (unsigned int j = 0; j < this->C.size(); j++)
         {
             line.push_back(t.A[i][j]);
         }
         A.push_back(line);
     }
-    for (int i = 0; i < auxiliarBase.size(); i++)
+    for (unsigned int i = 0; i < auxiliarBase.size(); i++)
     {
         Coordinate coord = auxiliarBase[i];
-        if (coord.y >= this->C.size())
+        if (coord.y >= (int)this->C.size())
         {
             int y = -1;
-            for (int j = 0; j < A[coord.x].size(); j++)
+            for (unsigned int j = 0; j < A[coord.x].size(); j++)
             {
                 Fraction column = A[coord.x][j];
                 if (!column.isZero())
@@ -218,7 +218,7 @@ ostream &operator<<(ostream &os, const Tabloid &x)
 {
     os << x.certificate << " | " << x.C << " | " << x.v << endl;
     os << endl;
-    for (int i = 0; i < x.B.size(); i++)
+    for (unsigned int i = 0; i < x.B.size(); i++)
     {
         os << x.certificateMatrix[i] << " | " << x.A[i] << " | " << x.B[i] << endl;
     }

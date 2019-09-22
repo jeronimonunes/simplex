@@ -25,13 +25,13 @@ int main()
 {
     Vector zeros(4);
     assertEqual(zeros.size(), 4);
-    for (int i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
         assertTrue(zeros[i] == 0);
     }
     Vector ones = Vector(1, 4);
     assertEqual(ones.size(), 4);
-    for (int i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
         assertTrue(ones[i] == 1);
     }

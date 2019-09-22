@@ -2,7 +2,7 @@
 
 bool Base::containsY(int y) const
 {
-    for (int i = 0; i < this->size(); i++)
+    for (unsigned int i = 0; i < this->size(); i++)
     {
         if ((*this)[i].y == y)
             return true;
@@ -12,7 +12,7 @@ bool Base::containsY(int y) const
 
 int Base::findIndexByX(int x) const
 {
-    for (int i = 0; i < this->size(); i++)
+    for (unsigned int i = 0; i < this->size(); i++)
     {
         if ((*this)[i].x == x)
             return i;
@@ -25,7 +25,7 @@ std::ostream &operator<<(std::ostream &os, const Base &v)
     if (v.size() > 0)
     {
         os << "(" << v[0] << ")";
-        for (int i = 1; i < v.size(); i++)
+        for (unsigned int i = 1; i < v.size(); i++)
         {
             os << " (" << v[i] << ")";
         }

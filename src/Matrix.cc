@@ -5,12 +5,12 @@ Matrix::Matrix()
 {
 }
 
-Matrix::Matrix(int n)
+Matrix::Matrix(unsigned int n)
 {
-    for (int i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         Vector line;
-        for (int j = 0; j < n; j++)
+        for (unsigned int j = 0; j < n; j++)
         {
             if (i == j)
             {
@@ -39,10 +39,10 @@ Matrix Matrix::copy() const
 Vector operator*(Vector &a, Matrix &b)
 {
     Vector result;
-    for (int j = 0; j < b[0].size(); j++)
+    for (unsigned int j = 0; j < b[0].size(); j++)
     {
         Fraction sum;
-        for (int i = 0; i < a.size(); i++)
+        for (unsigned int i = 0; i < a.size(); i++)
         {
             sum += b[i][j] * a[i];
         }
