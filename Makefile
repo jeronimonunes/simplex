@@ -1,11 +1,28 @@
-all: bigint/bigint.o src/a.exe
+all: program test
 
-bigint/bigint.o:
-	$(MAKE) -C bigint $(MAKECMDGOALS)
+ifdef OS
+   RM = del /Q
+else
+   ifeq ($(shell uname), Linux)
+      RM = rm -f
+   endif
+endif
 
-src/a.exe:	
-	$(MAKE) -C src $(MAKECMDGOALS)
+bigint:
+	$(MAKE) -C bigint library
+
+simplex:
+	$(MAKE) -C src all
+
+test:
+	$(MAKE) -C test all
+
+.PHONY: bigint simplex test
+
+program: bigint simplex
+	$(CXX) $(CXXFLAGS) $(wildcard bigint/*.o) $(wildcard src/*.o) src/Main.cc -o a.exe
 
 clean:
-	$(MAKE) -C bigint $(MAKECMDGOALS)
-	$(MAKE) -C src $(MAKECMDGOALS)
+	$(MAKE) -C bigint clean
+	$(MAKE) -C src clean
+	$(RM) a.exe
