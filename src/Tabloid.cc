@@ -172,7 +172,7 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
   }
   for (const auto &[x, y] : t.base)
   {
-    if (y >= (int)this->C.size())
+    if (y >= this->C.size())
     {
       int y = -1;
       for (unsigned int j = 0; j < A[x].size(); j++)
