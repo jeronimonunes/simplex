@@ -47,6 +47,7 @@ Result runSimplex(Tabloid &firstTabloid)
         {
           auto const &[y, x] = *itr;
           result.push_back(tabloid.B[x]);
+          std::ignore = y;
         }
       }
       else
@@ -93,6 +94,7 @@ Result runSimplex(Tabloid &firstTabloid)
           {
             const auto &[y, x] = *itr;
             cert[i] = -tabloid.A[x][negativeColumn];
+            std::ignore = y;
           }
         }
       }
