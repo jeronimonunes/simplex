@@ -38,18 +38,15 @@ Result runSimplex(Tabloid &firstTabloid)
       Fraction v = tabloid.C[y];
       if (v.isZero())
       {
-        bool found = false;
-        for (unsigned int p = 0; p < tabloid.base.size(); p++)
-        {
-          if (tabloid.base[p].y == (int)y)
-          {
-            found = true;
-            result.push_back(tabloid.B[tabloid.base[p].x]);
-          }
-        }
-        if (!found)
+        auto itr = tabloid.base.yfind(y);
+        if (itr == tabloid.base.yend())
         {
           result.push_back(0);
+        }
+        else
+        {
+          auto const &[y, x] = *itr;
+          result.push_back(tabloid.B[x]);
         }
       }
       else
@@ -87,21 +84,15 @@ Result runSimplex(Tabloid &firstTabloid)
         }
         else
         {
-          Coordinate coord = NULL_COORDINATE;
-          for (unsigned int p = 0; p < tabloid.base.size(); p++)
+          auto itr = tabloid.base.yfind(i);
+          if (itr == tabloid.base.yend())
           {
-            if (tabloid.base[p].y == (int)i)
-            {
-              coord = tabloid.base[p];
-            }
-          }
-          if (!coord.isNull())
-          {
-            cert[i] = -tabloid.A[coord.x][negativeColumn];
+            cert[i] = 0;
           }
           else
           {
-            cert[i] = 0;
+            const auto &[y, x] = *itr;
+            cert[i] = -tabloid.A[x][negativeColumn];
           }
         }
       }
