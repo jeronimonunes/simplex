@@ -2,7 +2,6 @@
 #define BASE_HH
 
 #include <map>
-#include "Coordinate.hh"
 #include <ostream>
 
 class Base

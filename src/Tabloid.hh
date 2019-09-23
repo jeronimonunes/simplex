@@ -4,7 +4,6 @@
 #include "Matrix.hh"
 #include "Fraction.hh"
 #include "Vector.hh"
-#include "Coordinate.hh"
 #include "Base.hh"
 
 class Tabloid
@@ -20,7 +19,7 @@ public:
   Base base;
 
 private:
-  Coordinate getCoordinateToEnterBase() const;
+  std::pair<int,int> getCoordinateToEnterBase() const;
 
 public:
   Tabloid(

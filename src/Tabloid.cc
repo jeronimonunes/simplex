@@ -128,7 +128,7 @@ Tabloid Tabloid::makeBaseUsable() const
   return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
 }
 
-Coordinate Tabloid::getCoordinateToEnterBase() const
+std::pair<int, int> Tabloid::getCoordinateToEnterBase() const
 {
   for (unsigned int j = 0; j < this->C.size(); j++)
   {
@@ -150,11 +150,11 @@ Coordinate Tabloid::getCoordinateToEnterBase() const
       }
       if (oldIndex != -1)
       {
-        return Coordinate(oldIndex, j);
+        return {oldIndex, j};
       }
     }
   }
-  return NULL_COORDINATE;
+  return {-1, -1};
 }
 
 Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
@@ -196,26 +196,26 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
   return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0, base);
 }
 
-ostream &operator<<(ostream &os, const Tabloid &x)
+std::ostream &operator<<(std::ostream &os, const Tabloid &x)
 {
-  os << x.certificate << " | " << x.C << " | " << x.v << endl;
-  os << endl;
+  os << x.certificate << " | " << x.C << " | " << x.v << std::endl;
+  os << std::endl;
   for (unsigned int i = 0; i < x.B.size(); i++)
   {
-    os << x.certificateMatrix[i] << " | " << x.A[i] << " | " << x.B[i] << endl;
+    os << x.certificateMatrix[i] << " | " << x.A[i] << " | " << x.B[i] << std::endl;
   }
   return os;
 }
 
 Tabloid Tabloid::runSimplexStep(bool &stepDone) const
 {
-  Coordinate enter = getCoordinateToEnterBase();
-  if (!enter.isNull())
+  const auto [x, y] = getCoordinateToEnterBase();
+  if (x != -1 && y != -1)
   {
     stepDone = true;
     Base base = this->base;
-    base.remove(enter.x);
-    base.set(enter.x, enter.y);
+    base.remove(x);
+    base.set(x, y);
     return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
   }
   else
