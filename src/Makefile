@@ -16,11 +16,11 @@ endif
 # Components of the library.
 library-objects = \
 	Fraction.o Vector.o Matrix.o Tabloid.o \
-	Coordinate.o StringUtil.o Simplex.o Io.o Base.o
+	StringUtil.o Simplex.o Io.o Base.o
 
 library-headers = \
 	Fraction.hh Vector.hh Matrix.hh Tabloid.hh \
-	Coordinate.hh StringUtil.hh Simplex.hh Io.hh Base.hh
+	StringUtil.hh Simplex.hh Io.hh Base.hh
 
 # To ``make the library'', make all its objects using the implicit rule.
 library: $(library-objects)
