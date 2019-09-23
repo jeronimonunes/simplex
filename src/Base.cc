@@ -1,34 +1,80 @@
 #include "Base.hh"
 
-bool Base::containsY(int y) const
+bool Base::containsY(unsigned int y) const
 {
-    for (unsigned int i = 0; i < this->size(); i++)
-    {
-        if ((*this)[i].y == y)
-            return true;
-    }
-    return false;
+  return this->ytox.count(y);
 }
 
-int Base::findIndexByX(int x) const
+void Base::set(unsigned int x, unsigned int y)
 {
-    for (unsigned int i = 0; i < this->size(); i++)
-    {
-        if ((*this)[i].x == x)
-            return i;
-    }
-    return -1; //potential for seg fault
+  this->xtoy[x] = y;
+  this->ytox[y] = x;
+}
+
+void Base::remove(unsigned int x)
+{
+  auto xitr = find(x);
+  if (xitr != end())
+  {
+    auto const &[x, y] = *xitr;
+    this->ytox.erase(y);
+    this->xtoy.erase(x);
+  }
+}
+
+void Base::yremove(unsigned int y)
+{
+  auto yitr = yfind(y);
+  if (yitr != yend())
+  {
+    auto const &[y, x] = *yitr;
+    this->ytox.erase(y);
+    this->xtoy.erase(x);
+  }
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::begin() const
+{
+  return this->xtoy.begin();
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::end() const
+{
+  return this->xtoy.end();
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::ybegin() const
+{
+  return this->ytox.begin();
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::yend() const
+{
+  return this->ytox.end();
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::find(unsigned int x) const
+{
+  return this->xtoy.find(x);
+}
+
+std::map<unsigned int, unsigned int>::const_iterator Base::yfind(unsigned int y) const
+{
+  return this->ytox.find(y);
 }
 
 std::ostream &operator<<(std::ostream &os, const Base &v)
 {
-    if (v.size() > 0)
-    {
-        os << "(" << v[0] << ")";
-        for (unsigned int i = 1; i < v.size(); i++)
-        {
-            os << " (" << v[i] << ")";
-        }
-    }
-    return os;
+  auto itr = v.begin();
+  if (itr != v.end())
+  {
+    auto const &[x, y] = *itr;
+    os << "(" << x << "," << y << ")";
+  }
+  for (; itr != v.end(); itr++)
+  {
+    auto const &[x, y] = *itr;
+    os << " (" << x << "," << y << ")";
+  }
+  return os;
 }

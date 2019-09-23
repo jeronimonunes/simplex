@@ -56,7 +56,7 @@ Tabloid Tabloid::makeAuxiliarSimplex() const
     {
       if (i == j)
       {
-        base.push_back(Coordinate((int)i, (int)j + this->C.size()));
+        base.set(i, j + this->C.size());
       }
       A[i].push_back(i == j ? 1 : 0);
     }
@@ -74,53 +74,52 @@ Tabloid Tabloid::makeBaseUsable() const
   Vector B = this->B;
   Fraction v = this->v;
 
-  for (unsigned int u = 0; u < base.size(); u++)
+  for (const auto &[x, y] : base)
   {
-    Coordinate coord = base[u];
-    Vector pline = A[coord.x];
-    Vector cpline = certificateMatrix[coord.x];
-    if (pline[coord.y].isOne())
+    Vector pline = A[x];
+    Vector cpline = certificateMatrix[x];
+    if (pline[y].isOne())
     {
       //fine
     }
     else
     {
-      Fraction fix = pline[coord.y].invert();
+      Fraction fix = pline[y].invert();
       pline = pline * fix;
       cpline = cpline * fix;
-      A[coord.x] = pline;
-      certificateMatrix[coord.x] = cpline;
-      B[coord.x] = B[coord.x] * fix;
+      A[x] = pline;
+      certificateMatrix[x] = cpline;
+      B[x] = B[x] * fix;
     }
-    if (C[coord.y].isZero())
+    if (C[y].isZero())
     {
       //fine
     }
     else
     { //fix c
-      Fraction fix = -C[coord.y];
+      Fraction fix = -C[y];
       C = C + pline * fix;
       certificate = certificate + cpline * fix;
-      v = v + B[coord.x] * fix;
+      v = v + B[x] * fix;
     }
     for (unsigned int i = 0; i < A.size(); i++)
     {
-      if ((int)i != coord.x)
+      if (i != x)
       {
         Vector aLine = A[i];
         Vector cLine = certificateMatrix[i];
-        if (aLine[coord.y].isZero())
+        if (aLine[y].isZero())
         {
           //fine
         }
         else
         {
-          Fraction fix = -aLine[coord.y];
+          Fraction fix = -aLine[y];
           aLine = aLine + pline * fix;
           cLine = cLine + cpline * fix;
           A[i] = aLine;
           certificateMatrix[i] = cLine;
-          B[i] = B[i] + B[coord.x] * fix;
+          B[i] = B[i] + B[x] * fix;
         }
       }
     }
@@ -171,15 +170,14 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
     }
     A.push_back(line);
   }
-  for (unsigned int i = 0; i < t.base.size(); i++)
+  for (const auto &[x, y] : t.base)
   {
-    Coordinate coord = t.base[i];
-    if (coord.y >= (int)this->C.size())
+    if (y >= (int)this->C.size())
     {
       int y = -1;
-      for (unsigned int j = 0; j < A[coord.x].size(); j++)
+      for (unsigned int j = 0; j < A[x].size(); j++)
       {
-        Fraction column = A[coord.x][j];
+        Fraction column = A[x][j];
         if (!column.isZero())
         {
           y = j;
@@ -187,17 +185,12 @@ Tabloid Tabloid::continueUsingAuxiliar(const Tabloid &t) const
       }
       if (y >= 0)
       {
-        base.push_back(Coordinate(coord.x, y));
-      }
-      else
-      {
-        //potential for seg fault
-        base.push_back(NULL_COORDINATE);
+        base.set(x, y);
       }
     }
     else
     {
-      base.push_back(coord);
+      base.set(x, y);
     }
   }
   return Tabloid(Vector(A.size()), t.certificateMatrix, A, t.B, this->C, 0, base);
@@ -221,8 +214,8 @@ Tabloid Tabloid::runSimplexStep(bool &stepDone) const
   {
     stepDone = true;
     Base base = this->base;
-    int leaveIdx = base.findIndexByX(enter.x);
-    base[leaveIdx] = enter;
+    base.remove(enter.x);
+    base.set(enter.x, enter.y);
     return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
   }
   else
