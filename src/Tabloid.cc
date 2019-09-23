@@ -32,15 +32,15 @@ Tabloid::Tabloid(
 Tabloid Tabloid::fixNegativeB() const
 {
   Matrix A = this->A;
-  Vector B = this->B;
   Matrix certificateMatrix = this->certificateMatrix;
+  Vector B = this->B;
   for (unsigned int i = 0; i < B.size(); i++)
   {
     if (B[i].isNegative())
     {
-      A[i] = -A[i];
-      certificateMatrix[i] = -certificateMatrix[i];
-      B[i] = -B[i];
+      A[i].flipSign();
+      certificateMatrix[i].flipSign();
+      B[i].flipSign();
     }
   }
   return Tabloid(certificate, certificateMatrix, A, B, C, v, base);
@@ -61,7 +61,7 @@ Tabloid Tabloid::makeAuxiliarSimplex() const
       A[i].push_back(i == j ? 1 : 0);
     }
   }
-  Vector C = Vector(this->C.size()).concat(Vector(1, A.size()));
+  const Vector C = Vector(this->C.size()).concat(Vector(1, A.size()));
   return Tabloid(certificate, certificateMatrix, A, B, C, 0, base);
 }
 
@@ -70,14 +70,14 @@ Tabloid Tabloid::makeBaseUsable() const
   Vector certificate = this->certificate;
   Matrix certificateMatrix = this->certificateMatrix;
   Vector C = this->C;
-  Matrix A = this->A;
   Vector B = this->B;
+  Matrix A = this->A;
   Fraction v = this->v;
 
   for (const auto &[x, y] : base)
   {
-    Vector pline = A[x];
-    Vector cpline = certificateMatrix[x];
+    Vector &pline = A[x];
+    Vector &cpline = certificateMatrix[x];
     if (pline[y].isOne())
     {
       //fine
@@ -85,11 +85,9 @@ Tabloid Tabloid::makeBaseUsable() const
     else
     {
       Fraction fix = pline[y].invert();
-      pline = pline * fix;
-      cpline = cpline * fix;
-      A[x] = pline;
-      certificateMatrix[x] = cpline;
-      B[x] = B[x] * fix;
+      pline *= fix;
+      cpline *= fix;
+      B[x] *= fix;
     }
     if (C[y].isZero())
     {
@@ -97,29 +95,27 @@ Tabloid Tabloid::makeBaseUsable() const
     }
     else
     { //fix c
-      Fraction fix = -C[y];
-      C = C + pline * fix;
-      certificate = certificate + cpline * fix;
-      v = v + B[x] * fix;
+      const Fraction fix = -C[y];
+      C += pline * fix;
+      certificate += cpline * fix;
+      v += B[x] * fix;
     }
     for (unsigned int i = 0; i < A.size(); i++)
     {
       if (i != x)
       {
-        Vector aLine = A[i];
-        Vector cLine = certificateMatrix[i];
+        Vector &aLine = A[i];
+        Vector &cLine = certificateMatrix[i];
         if (aLine[y].isZero())
         {
           //fine
         }
         else
         {
-          Fraction fix = -aLine[y];
-          aLine = aLine + pline * fix;
-          cLine = cLine + cpline * fix;
-          A[i] = aLine;
-          certificateMatrix[i] = cLine;
-          B[i] = B[i] + B[x] * fix;
+          const Fraction fix = -aLine[y];
+          aLine += pline * fix;
+          cLine += cpline * fix;
+          B[i] += B[x] * fix;
         }
       }
     }
