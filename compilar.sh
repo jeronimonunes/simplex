@@ -1,2 +1,2 @@
 #!/bin/bash
-make CXXFLAGS="-std=c++11 -Ofast" tp
+make CXXFLAGS="-std=c++17 -Ofast" tp
