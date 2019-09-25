@@ -220,3 +220,79 @@ Tabloid Tabloid::runSimplexStep(bool &stepDone) const
     return *this;
   }
 }
+
+Result Tabloid::getResult() const
+{
+  Vector result;
+  for (unsigned int y = 0; y < this->C.size(); y++)
+  {
+    Fraction v = this->C[y];
+    if (v.isZero())
+    {
+      auto itr = this->base.yfind(y);
+      if (itr == this->base.yend())
+      {
+        result.push_back(0);
+      }
+      else
+      {
+        auto const &[y, x] = *itr;
+        result.push_back(this->B[x]);
+        std::ignore = y;
+      }
+    }
+    else
+    {
+      result.push_back(0);
+    }
+  }
+  bool otima = true;
+  int negativeColumn = -1;
+  for (unsigned int g = 0; g < this->C.size(); g++)
+  {
+    if (this->C[g].isNegative())
+    {
+      otima = false;
+      negativeColumn = g;
+      break;
+    }
+  }
+  if (otima)
+  {
+    return {
+        ResultType::LIMITED,
+        this->certificate,
+        this->v,
+        result};
+  }
+  else
+  {
+    Vector cert(this->C.size());
+    for (unsigned int i = 0; i < this->C.size(); i++)
+    {
+      if (this->C[i].isNegative())
+      {
+        cert[i] = 1;
+      }
+      else
+      {
+        auto itr = this->base.yfind(i);
+        if (itr == this->base.yend())
+        {
+          cert[i] = 0;
+        }
+        else
+        {
+          const auto &[y, x] = *itr;
+          cert[i] = -this->A[x][negativeColumn];
+          std::ignore = y;
+        }
+      }
+    }
+    return {
+        ResultType::ILIMITED,
+        cert,
+        0,
+        result};
+  }
+}

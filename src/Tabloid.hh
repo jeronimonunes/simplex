@@ -6,6 +6,22 @@
 #include "Vector.hh"
 #include "Base.hh"
 
+enum class ResultType
+{
+  UNFEASIBLE,
+  ILIMITED,
+  LIMITED
+};
+
+class Result
+{
+public:
+  ResultType type;
+  Vector certificate;
+  Fraction value;
+  Vector solution;
+};
+
 class Tabloid
 {
 
@@ -19,7 +35,7 @@ public:
   Base base;
 
 private:
-  std::pair<int,int> getCoordinateToEnterBase() const;
+  std::pair<int, int> getCoordinateToEnterBase() const;
 
 public:
   Tabloid(
@@ -41,6 +57,7 @@ public:
   Tabloid makeBaseUsable() const;
   Tabloid continueUsingAuxiliar(const Tabloid &auxiliar) const;
   Tabloid runSimplexStep(bool &stepDone) const;
+  Result getResult() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Tabloid &x);
