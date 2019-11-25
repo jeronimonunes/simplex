@@ -17,7 +17,7 @@ Result runSimplex(Tabloid &firstTabloid)
   if (auxiliar.v.isNegative())
   {
     return {
-        ResultType::UNFEASIBLE,
+        ResultType::INFEASIBLE,
         auxiliar.certificate,
         0,
         Vector(0)};
