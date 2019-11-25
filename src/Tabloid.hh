@@ -8,7 +8,7 @@
 
 enum class ResultType
 {
-  UNFEASIBLE,
+  INFEASIBLE,
   ILIMITED,
   LIMITED
 };
