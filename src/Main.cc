@@ -18,7 +18,7 @@ int main()
         cout << result.solution << endl;
         cout << result.certificate << endl;
         break;
-    case ResultType::UNFEASIBLE:
+    case ResultType::INFEASIBLE:
         cout << "inviavel" << endl;
         cout << result.certificate << endl;
         break;
