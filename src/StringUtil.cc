@@ -3,9 +3,9 @@
 
 using namespace std;
 
-const vector<string> explode(const string &s, std::initializer_list<char> list)
+vector<string> explode(const string &s, const std::initializer_list<char> &list)
 {
-	string buff{""};
+	string buff;
 	vector<string> v;
 
 	for (char n : s)

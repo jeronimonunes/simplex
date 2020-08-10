@@ -18,7 +18,7 @@ public:
       equal = BigInteger::equal,
       greater = BigInteger::greater;
 
-  static Fraction fromString(std::string &);
+  static Fraction fromString(const std::string &);
 
 public:
   Fraction();

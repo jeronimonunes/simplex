@@ -1,9 +1,11 @@
 #include "Io.hh"
 #include "StringUtil.hh"
 
-const std::initializer_list<char> SPACES = {' ', '\t', '\r', '\n'};
+using namespace std;
 
-Tabloid readString(std::istream &istream)
+const initializer_list<char> SPACES = {' ', '\t', '\r', '\n'};
+
+Tabloid readString(istream &istream)
 {
     Matrix A;
     Vector B;

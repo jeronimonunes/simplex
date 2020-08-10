@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 
-const vector<string> explode(const string &s, std::initializer_list<char> list);
+std::vector<std::string> explode(const std::string &s, const std::initializer_list<char>& list);
 
 #endif

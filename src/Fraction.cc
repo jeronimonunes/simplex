@@ -18,7 +18,7 @@ double bigIntegerToDouble(const BigInteger &v)
   return stod(bigIntegerToString(v));
 }
 
-Fraction Fraction::fromString(string &s)
+Fraction Fraction::fromString(const string &s)
 {
   vector<string> parts = explode(s, {'/'});
   if (parts.size() == 1)
